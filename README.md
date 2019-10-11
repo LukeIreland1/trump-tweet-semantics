@@ -1,7 +1,6 @@
 # Trump Tweet Semantics
-{::comment}
-A *brief* paragraph explaining your project and what it does should be written here. The idea is to give readers an overview of what it is that you've built.
-{:/comment}
+
+## Project Description
 My project analyses tweets from Donald Trump for positive, neutral and negative semantics. 
 
 ## Getting Started
