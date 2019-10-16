@@ -10,23 +10,31 @@ from nltk.classify import ClassifierI
 from statistics import mode
 from nltk.tokenize import word_tokenize
 import re
+from nltk.tokenize import WordPunctTokenizer
+from google.cloud import language
+from google.cloud.language import enums
+from google.cloud.language import types
 
 
 def get_tweets(filename="tweets.json"):
     with open(filename, "r") as read_file:
         tweets = json.load(read_file)
-    return tweets
+    new_tweets = []
+    for tweet in tweets:
+        if tweet:
+            new_tweets.append(tweet["text"])
+    return new_tweets
 
 
 def print_tweets(tweets):
     for tweet in tweets:
-        print(tweet["text"])
+        print(tweet)
 
 
 def get_words(tweets):
     words = []
     for tweet in tweets:
-        for word in tweet["text"].split():
+        for word in tweet.split():
             words.append(word.lower())
     return words
 
@@ -50,4 +58,53 @@ words = get_words(tweets)
 phrases = get_phrases(words, length=5)
 words = nltk.FreqDist(words)
 # print(words.most_common(50))
-print(nltk.FreqDist(phrases).most_common(50))
+# print(nltk.FreqDist(phrases).most_common(50))
+
+
+def clean_tweets(tweet):
+    user_removed = re.sub(r'@[A-Za-z0-9]+', '', tweet)
+    link_removed = re.sub('https?://[A-Za-z0-9./]+', '', user_removed)
+    number_removed = re.sub('[^a-zA-Z]', ' ', link_removed)
+    lower_case_tweet = number_removed.lower()
+    tok = WordPunctTokenizer()
+    words = tok.tokenize(lower_case_tweet)
+    clean_tweet = (' '.join(words)).strip()
+    return clean_tweet
+
+
+def get_sentiment_score(tweet):
+    client = language.LanguageServiceClient()
+    document = types\
+        .Document(content=tweet,
+                  type=enums.Document.Type.PLAIN_TEXT)
+    sentiment_score = client\
+        .analyze_sentiment(document=document)\
+        .document_sentiment\
+        .score
+    return sentiment_score
+
+
+score = 0
+
+
+def analyze_tweets(tweets):
+    score = 0
+    for tweet in tweets:
+        cleaned_tweet = clean_tweets(tweet)
+        sentiment_score = get_sentiment_score(cleaned_tweet)
+        score += sentiment_score
+        if cleaned_tweet:
+            print('Tweet: {}'.format(cleaned_tweet))
+            print('Score: {}\n'.format(sentiment_score))
+        final_score = round((score / float(len(tweets))), 2)
+    return final_score
+
+
+final_score = analyze_tweets(tweets)
+
+if final_score <= -0.25:
+    status = 'NEGATIVE ❌'
+elif final_score <= 0.25:
+    status = 'NEUTRAL ?'
+else:
+    status = 'POSITIVE ✅'
