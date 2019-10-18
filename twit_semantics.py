@@ -1,19 +1,7 @@
-import nltk
 import json
-import random
-import pickle
+import nltk
 import re
-from sklearn.naive_bayes import MultinomialNB, BernoulliNB
-from sklearn.linear_model import LogisticRegression, SGDClassifier
-from sklearn.svm import SVC, LinearSVC, NuSVC
-from statistics import mode
-from nltk.classify import ClassifierI
-from nltk.classify.scikitlearn import SklearnClassifier
-from nltk.tokenize import word_tokenize
-from nltk.tokenize import WordPunctTokenizer
-from google.cloud import language
-from google.cloud.language import enums
-from google.cloud.language import types
+from nltk import WordPunctTokenizer
 from textblob import TextBlob
 
 
@@ -74,9 +62,9 @@ def clean_tweet(tweet):
 
 
 def get_sentiment_score(tweet):
-    ''' 
-    Utility function to classify sentiment of passed tweet 
-    using textblob's sentiment method 
+    '''
+    Utility function to classify sentiment of passed tweet
+    using textblob's sentiment method
     '''
     # create TextBlob object of passed tweet text
     analysis = TextBlob(clean_tweet(tweet))
@@ -87,20 +75,46 @@ def get_sentiment_score(tweet):
 score = 0
 
 
-def analyze_tweets(tweets):
-    score = 0
-    for tweet in tweets:
-        cleaned_tweet = clean_tweet(tweet)
-        sentiment_score = get_sentiment_score(cleaned_tweet)
-        score += sentiment_score
-        if cleaned_tweet:
-            print('Tweet: {}'.format(cleaned_tweet))
-            print('Score: {}\n'.format(sentiment_score))
-        final_score = round((score / float(len(tweets))), 2)
-    return final_score
+class tweet_analyser():
+    def __init__(self):
+        self.score = 0
+        self.pos_tweets = []
+        self.pos_count = 0
+        self.neg_tweets = []
+        self.neg_count = 0
+        self.neut_tweets = []
+        self.neut_count = 0
 
+    def analyze_tweets(self, tweets):
+        for tweet in tweets:
+            cleaned_tweet = clean_tweet(tweet)
+            if cleaned_tweet:
+                sentiment_score = get_sentiment_score(cleaned_tweet)
+                if sentiment_score <= -0.25:
+                    self.neg_count += 1
+                    self.neg_tweets.append(tweet)
+                elif sentiment_score <= 0.25:
+                    self.neut_count += 1
+                    self.neut_tweets.append(tweet)
+                else:
+                    self.pos_count += 1
+                    self.pos_tweets.append(tweet)
+                self.score += sentiment_score
+                print('Tweet: {}'.format(cleaned_tweet))
+                print('Score: {}\n'.format(sentiment_score))
+        final_score = round((self.score / float(len(tweets))), 2)
+        return final_score
 
-final_score = analyze_tweets(tweets)
+    def sentiment_split(self):
+        total = self.neg_count + self.pos_count + self.neut_count
+        neg_split =  format(self.neg_count/total, ".3g")
+        pos_split = format(self.pos_count/total, ".3g")
+        neut_split = format(self.neut_count/total, ".3g")
+        return neg_split, neut_split, pos_split
+
+analyser = tweet_analyser()
+final_score = analyser.analyze_tweets(tweets[:100])
+
 
 if final_score <= -0.25:
     status = 'NEGATIVE ❌'
@@ -108,3 +122,11 @@ elif final_score <= 0.25:
     status = 'NEUTRAL ?'
 else:
     status = 'POSITIVE ✅'
+
+print(final_score, status)
+neg, neut, pos = analyser.sentiment_split()
+print(
+    "{}% negative\n{}% neutral\n{}% positive".format(
+        neg, neut, pos
+    )
+)
