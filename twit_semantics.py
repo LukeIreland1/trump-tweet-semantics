@@ -14,6 +14,7 @@ from nltk.tokenize import WordPunctTokenizer
 from google.cloud import language
 from google.cloud.language import enums
 from google.cloud.language import types
+from textblob import TextBlob
 
 
 def get_tweets(filename="tweets.json"):
@@ -61,7 +62,7 @@ words = nltk.FreqDist(words)
 # print(nltk.FreqDist(phrases).most_common(50))
 
 
-def clean_tweets(tweet):
+def clean_tweet(tweet):
     user_removed = re.sub(r'@[A-Za-z0-9]+', '', tweet)
     link_removed = re.sub('https?://[A-Za-z0-9./]+', '', user_removed)
     number_removed = re.sub('[^a-zA-Z]', ' ', link_removed)
@@ -73,15 +74,14 @@ def clean_tweets(tweet):
 
 
 def get_sentiment_score(tweet):
-    client = language.LanguageServiceClient()
-    document = types\
-        .Document(content=tweet,
-                  type=enums.Document.Type.PLAIN_TEXT)
-    sentiment_score = client\
-        .analyze_sentiment(document=document)\
-        .document_sentiment\
-        .score
-    return sentiment_score
+    ''' 
+    Utility function to classify sentiment of passed tweet 
+    using textblob's sentiment method 
+    '''
+    # create TextBlob object of passed tweet text
+    analysis = TextBlob(clean_tweet(tweet))
+    # set sentiment
+    return analysis.sentiment.polarity
 
 
 score = 0
@@ -90,7 +90,7 @@ score = 0
 def analyze_tweets(tweets):
     score = 0
     for tweet in tweets:
-        cleaned_tweet = clean_tweets(tweet)
+        cleaned_tweet = clean_tweet(tweet)
         sentiment_score = get_sentiment_score(cleaned_tweet)
         score += sentiment_score
         if cleaned_tweet:
