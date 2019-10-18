@@ -1,15 +1,15 @@
 import nltk
 import json
 import random
-from nltk.classify.scikitlearn import SklearnClassifier
 import pickle
+import re
 from sklearn.naive_bayes import MultinomialNB, BernoulliNB
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.svm import SVC, LinearSVC, NuSVC
-from nltk.classify import ClassifierI
 from statistics import mode
+from nltk.classify import ClassifierI
+from nltk.classify.scikitlearn import SklearnClassifier
 from nltk.tokenize import word_tokenize
-import re
 from nltk.tokenize import WordPunctTokenizer
 from google.cloud import language
 from google.cloud.language import enums
