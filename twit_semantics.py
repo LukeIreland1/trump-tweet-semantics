@@ -1,12 +1,15 @@
 import json
 import nltk
 import re
+import os
 from nltk import WordPunctTokenizer
 from textblob import TextBlob
 
+dir_path = os.path.dirname(__file__)
+tweet_path = os.path.join(dir_path, "tweets.json")
 
-def get_tweets(filename="tweets.json"):
-    with open(filename, "r") as read_file:
+def get_tweets(filename=tweet_path):
+    with open(filename, "r", encoding="utf8") as read_file:
         tweets = json.load(read_file)
     new_tweets = []
     for tweet in tweets:
@@ -107,10 +110,11 @@ class tweet_analyser():
 
     def sentiment_split(self):
         total = self.neg_count + self.pos_count + self.neut_count
-        neg_split =  format(self.neg_count/total, ".3g")
+        neg_split = format(self.neg_count/total, ".3g")
         pos_split = format(self.pos_count/total, ".3g")
         neut_split = format(self.neut_count/total, ".3g")
         return neg_split, neut_split, pos_split
+
 
 analyser = tweet_analyser()
 final_score = analyser.analyze_tweets(tweets[:100])
