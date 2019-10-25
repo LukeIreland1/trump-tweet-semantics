@@ -73,7 +73,6 @@ class tweet_analyser():
         clean_tweet = (' '.join(words)).strip()
         return clean_tweet
 
-
     def get_sentiment_score(self, tweet):
         '''
         Utility function to classify sentiment of passed tweet
@@ -129,5 +128,6 @@ def run_analysis():
             neg, neut, pos
         )
     )
+
 
 run_analysis()
