@@ -110,9 +110,9 @@ class tweet_analyser():
 
     def sentiment_split(self):
         total = self.neg_count + self.pos_count + self.neut_count
-        neg_split = format(self.neg_count/total, ".3g")
-        pos_split = format(self.pos_count/total, ".3g")
-        neut_split = format(self.neut_count/total, ".3g")
+        neg_split =  format(self.neg_count*100/total, ".3g")
+        pos_split = format(self.pos_count*100/total, ".3g")
+        neut_split = format(self.neut_count*100/total, ".3g")
         return neg_split, neut_split, pos_split
 
 
