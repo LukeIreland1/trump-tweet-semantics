@@ -8,6 +8,7 @@ from textblob import TextBlob
 dir_path = os.path.dirname(__file__)
 tweet_path = os.path.join(dir_path, "tweets.json")
 
+
 def get_tweets(filename=tweet_path):
     with open(filename, "r", encoding="utf8") as read_file:
         tweets = json.load(read_file)
@@ -52,32 +53,6 @@ words = nltk.FreqDist(words)
 # print(words.most_common(50))
 # print(nltk.FreqDist(phrases).most_common(50))
 
-
-def clean_tweet(tweet):
-    user_removed = re.sub(r'@[A-Za-z0-9]+', '', tweet)
-    link_removed = re.sub('https?://[A-Za-z0-9./]+', '', user_removed)
-    number_removed = re.sub('[^a-zA-Z]', ' ', link_removed)
-    lower_case_tweet = number_removed.lower()
-    tok = WordPunctTokenizer()
-    words = tok.tokenize(lower_case_tweet)
-    clean_tweet = (' '.join(words)).strip()
-    return clean_tweet
-
-
-def get_sentiment_score(tweet):
-    '''
-    Utility function to classify sentiment of passed tweet
-    using textblob's sentiment method
-    '''
-    # create TextBlob object of passed tweet text
-    analysis = TextBlob(clean_tweet(tweet))
-    # set sentiment
-    return analysis.sentiment.polarity
-
-
-score = 0
-
-
 class tweet_analyser():
     def __init__(self):
         self.score = 0
@@ -88,11 +63,32 @@ class tweet_analyser():
         self.neut_tweets = []
         self.neut_count = 0
 
+    def clean_tweet(self, tweet):
+        user_removed = re.sub(r'@[A-Za-z0-9]+', '', tweet)
+        link_removed = re.sub('https?://[A-Za-z0-9./]+', '', user_removed)
+        number_removed = re.sub('[^a-zA-Z]', ' ', link_removed)
+        lower_case_tweet = number_removed.lower()
+        tok = WordPunctTokenizer()
+        words = tok.tokenize(lower_case_tweet)
+        clean_tweet = (' '.join(words)).strip()
+        return clean_tweet
+
+
+    def get_sentiment_score(self, tweet):
+        '''
+        Utility function to classify sentiment of passed tweet
+        using textblob's sentiment method
+        '''
+        # create TextBlob object of passed tweet text
+        analysis = TextBlob(self.clean_tweet(tweet))
+        # set sentiment
+        return analysis.sentiment.polarity
+
     def analyze_tweets(self, tweets):
         for tweet in tweets:
-            cleaned_tweet = clean_tweet(tweet)
+            cleaned_tweet = self.clean_tweet(tweet)
             if cleaned_tweet:
-                sentiment_score = get_sentiment_score(cleaned_tweet)
+                sentiment_score = self.get_sentiment_score(cleaned_tweet)
                 if sentiment_score <= -0.25:
                     self.neg_count += 1
                     self.neg_tweets.append(tweet)
@@ -110,27 +106,28 @@ class tweet_analyser():
 
     def sentiment_split(self):
         total = self.neg_count + self.pos_count + self.neut_count
-        neg_split =  format(self.neg_count*100/total, ".3g")
+        neg_split = format(self.neg_count*100/total, ".3g")
         pos_split = format(self.pos_count*100/total, ".3g")
         neut_split = format(self.neut_count*100/total, ".3g")
         return neg_split, neut_split, pos_split
 
+def run_analysis():
+    analyser = tweet_analyser()
+    final_score = analyser.analyze_tweets(tweets[:100])
 
-analyser = tweet_analyser()
-final_score = analyser.analyze_tweets(tweets[:100])
+    if final_score <= -0.25:
+        status = 'NEGATIVE ❌'
+    elif final_score <= 0.25:
+        status = 'NEUTRAL ?'
+    else:
+        status = 'POSITIVE ✅'
 
-
-if final_score <= -0.25:
-    status = 'NEGATIVE ❌'
-elif final_score <= 0.25:
-    status = 'NEUTRAL ?'
-else:
-    status = 'POSITIVE ✅'
-
-print(final_score, status)
-neg, neut, pos = analyser.sentiment_split()
-print(
-    "{}% negative\n{}% neutral\n{}% positive".format(
-        neg, neut, pos
+    print(final_score, status)
+    neg, neut, pos = analyser.sentiment_split()
+    print(
+        "{}% negative\n{}% neutral\n{}% positive".format(
+            neg, neut, pos
+        )
     )
-)
+
+run_analysis()
