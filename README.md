@@ -8,6 +8,9 @@ My project analyses tweets from Donald Trump for positive, neutral and negative 
 ### Prerequisites
 * Python 3.5 (or later)
 * NLTK
+* TextBlob
+* WordCloud
+* Matplotlib
 * Tweets in JSON format (http://www.trumptwitterarchive.com/archive)
 
 ### Installing
@@ -15,8 +18,8 @@ My project analyses tweets from Donald Trump for positive, neutral and negative 
 #### Install libraries and run program
 
 ```
-pip install nltk
-python3 main.py
+pip3 install nltk textblob wordcloud matplotlib
+python3 twit_semantics.py
 ```
 
 ### Running Tests

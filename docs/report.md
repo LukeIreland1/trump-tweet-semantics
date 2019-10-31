@@ -13,8 +13,10 @@
 7. [Word Cloud](#word-cloud)
 8. [Frequency Distribution](#frequency-distribution)
 9.  [Tweet Generation](#tweet-generation)
-10. [Evaluation](#evaluation)
-11. [Conclusion](#conclusion)
+10. [Web Application Presentation](#web-application-presentation)
+11. [Evaluation](#evaluation)
+12. [Conclusion](#conclusion)
+
 
 
 
@@ -25,7 +27,6 @@ This project revolves around analysing Donald Trump's twitter in various ways to
 Analysis methods include:
 * Frequency Distribution
 * Word Clouds
-* Sentiment Analysis
 * Sentiment Analysis
 * Tweet Generation
 
@@ -64,16 +65,29 @@ TextBlob is a simplified text processing library for Python, and provides a simp
 
 
 ## Parsing
+I used Python's JSON library to load the .json file into the program as a dict.
 
 ## Tweet Cleaner
+I removed non-alphabetical characters from the tweet.
 
 ## Sentiment Scoring
+I used TextBlob to retrieve a sentiment score
 
 ## Sentiment Classification
+I decided to choose rather narrow ranges for each sentiment class.
+* Less than -0.25 = Negative
+* Between +0.25 and -0.25 = Neutral
+* More than +0.25 = Positive
 
 ## Word Cloud
+Here is a word cloud I created using the Python library wordcloud.
+![Phrase length = 4](../images/wordcloud4.png "Phrase length = 4")
 
 ## Frequency Distribution
+I used NLTK to look at the most common words and phrases of different lengths.
+
+## Web Application Presentation
+I used PonyORM to...
 
 ## Evaluation
 
