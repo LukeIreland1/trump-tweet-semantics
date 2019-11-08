@@ -2,7 +2,7 @@ import json
 import nltk
 import re
 import os
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
 from nltk import WordPunctTokenizer
 from textblob import TextBlob
 from wordcloud import WordCloud, STOPWORDS
@@ -47,6 +47,7 @@ def get_phrases(words, length=2):
         phrases.append(phrase)
     return(phrases)
 
+
 # Needs adding to a function or class
 tweets = get_tweets()
 words = get_words(tweets)
@@ -66,11 +67,13 @@ def clean_tweet(tweet):
     clean_tweet = (' '.join(words)).strip()
     return clean_tweet
 
+
 def get_clean_tweets(tweets):
     clean_tweets = []
     for tweet in tweets:
         clean_tweets.append(clean_tweet(tweet))
     return clean_tweets
+
 
 def run_analysis():
     analyser = TweetAnalyser()
@@ -91,11 +94,12 @@ def run_analysis():
         )
     )
 
+
 def display_cloud():
     wordcloud = PhraseCloud(width=800, height=800,
-                          background_color='white',
-                          stopwords=STOPWORDS,
-                          min_font_size=10).generate(phrases)
+                            background_color='white',
+                            stopwords=STOPWORDS,
+                            min_font_size=10).generate(phrases)
 
     plt.figure(figsize=(8, 8), facecolor=None)
     plt.imshow(wordcloud)
@@ -104,8 +108,10 @@ def display_cloud():
 
     plt.show()
 
+
 def get_word_freq(word):
     return words[word]
+
 
 class TweetAnalyser():
     def __init__(self):
@@ -154,9 +160,11 @@ class TweetAnalyser():
         neut_split = format(self.neut_count*100/total, ".3g")
         return neg_split, neut_split, pos_split
 
+
 class PhraseCloud(WordCloud):
     def process_text(self, phrases):
         return nltk.FreqDist(phrases)
+
 
 run_analysis()
 display_cloud()
