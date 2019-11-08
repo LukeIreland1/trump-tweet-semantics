@@ -122,3 +122,5 @@ Results and findings
 [^5]: https://towardsdatascience.com/creating-the-twitter-sentiment-analysis-program-in-python-with-naive-bayes-classification-672e5589a7ed
 [^6]: https://www.freecodecamp.org/news/how-to-make-your-own-sentiment-analyzer-using-python-and-googles-natural-language-api-9e91e1c493e/
 [^7]: https://www.geeksforgeeks.org/twitter-sentiment-analysis-using-python/
+[^8]: https://github.com/jsvine/markovify
+[^9]: https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2
