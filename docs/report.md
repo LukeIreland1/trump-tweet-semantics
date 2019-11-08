@@ -1,4 +1,4 @@
-<md-cover title='title' author='author'></md-cover>
+<md-cover title='Trump Tweet Sentiment Analysis' author='Luke Ireland'></md-cover>
 <md-style name="latex"></md-style>
 
 # 1. Table of Contents
@@ -16,10 +16,11 @@
 - [7. Sentiment Classification](#7-sentiment-classification)
 - [8. Word Cloud](#8-word-cloud)
 - [9. Frequency Distribution](#9-frequency-distribution)
-- [10. Web Application Presentation](#10-web-application-presentation)
-- [11. Evaluation](#11-evaluation)
-- [12. Conclusion](#12-conclusion)
-- [Footnotes](#footnotes)
+- [10. Tweet Generator](#10-tweet-generator)
+- [11. Web Application Presentation](#11-web-application-presentation)
+- [12. Evaluation](#12-evaluation)
+- [13. Conclusion](#13-conclusion)
+- [14. References](#14-references)
 
 # 2. Introduction
 
@@ -67,6 +68,8 @@ I saw guides such as [Basic Binary Sentiment Analysis using NLTK](https://toward
 Eventually, I fell upon this [article](https://www.geeksforgeeks.org/twitter-sentiment-analysis-using-python/)[^7] which used TextBlob to perform sentiment analysis instead.
 TextBlob is a simplified text processing library for Python, and provides a simple API for performing Natural Language Processing tasks, such as speech tagging, noun extraction, classification, translation and, most importantly, sentiment analysis.
 
+For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^8], which I found from [this](https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2)[^9] article attempting the same thing. The article listed multiple approaches, including using a Keras API and k-means clustering to build a Machine Learning model to feed into tweet generators, but that added a significant layer of obscurity to getting truly random tweets each time random tweets are requested. For example, it made it possible to get tweets about Hillary Clinton and North Korea in the same tweet/sentence.
+
 # 4. Parsing
 
 I used Python's JSON library to load the .json file into the program as a dict.
@@ -96,17 +99,21 @@ Here is a word cloud I created using the Python library wordcloud.
 
 I used NLTK to look at the most common words and phrases of different lengths.
 
-# 10. Web Application Presentation
+# 10. Tweet Generator
+
+I created my own class using Markovify[^8], that would force the generator to generate tweets containing a given user word.
+
+# 11. Web Application Presentation
 
 I used PonyORM to...
 
-# 11. Evaluation
+# 12. Evaluation
 
 Results and findings
 
-# 12. Conclusion
+# 13. Conclusion
 
-# Footnotes
+# 14. References
 
 [^1]: https://github.com/ckoepp/TwitterSearch
 [^2]: http://www.trumptwitterarchive.com/archive

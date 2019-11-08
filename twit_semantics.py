@@ -2,6 +2,7 @@ import json
 import nltk
 import re
 import os
+import markovify
 import matplotlib.pyplot as plt
 from nltk import WordPunctTokenizer
 from textblob import TextBlob
@@ -113,6 +114,40 @@ def get_word_freq(word):
     return words[word]
 
 
+def make_tweets(tweets):
+    # Build the model.
+    text_model = markovify.Text(tweets)
+
+    # Print five randomly-generated sentences
+    for i in range(5):
+        print(text_model.make_short_sentence(140))
+
+
+def make_tweets_from_word(tweets, word):
+    results = [tweet for tweet in tweets if word.lower() in tweet.lower()]
+    # Build the model.
+    text_model = TrumpModel(results, word)
+
+    # Print five randomly-generated sentences
+    for i in range(5):
+        print(text_model.make_short_sentence())
+
+
+class TrumpModel(markovify.Text):
+    def __init__(self, results, word):
+        self.word = word
+        super().__init__(results)
+
+    def make_short_sentence(self):
+        sentence = ""
+        while True:
+            sentence = self.make_sentence()
+            if sentence:
+                if len(sentence) > 0 and len(sentence) < 140:
+                    if word in sentence:
+                        return sentence
+
+
 class TweetAnalyser():
     def __init__(self):
         self.score = 0
@@ -163,11 +198,14 @@ class TweetAnalyser():
 
 class PhraseCloud(WordCloud):
     def process_text(self, phrases):
+        phrases = get_clean_tweets(phrases)
         return nltk.FreqDist(phrases)
 
 
-run_analysis()
-display_cloud()
+# run_analysis()
+# display_cloud()
 word = "obama"
 count = words[word]
 print("Trump said {} {} times".format(word, count))
+# make_tweets(tweets)
+make_tweets_from_word(tweets, word)
