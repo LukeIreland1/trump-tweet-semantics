@@ -11,6 +11,7 @@ from wordcloud import WordCloud, STOPWORDS
 DIR_PATH = os.path.dirname(__file__)
 TWEET_PATH = os.path.join(DIR_PATH, "tweets.json")
 
+# TODO: Incoroporate new custom semantic/classifer from lukifier
 
 def get_tweets(filename=TWEET_PATH):
     with open(filename, "r", encoding="utf8") as read_file:
@@ -74,27 +75,6 @@ def get_clean_tweets(tweets):
     for tweet in tweets:
         clean_tweets.append(clean_tweet(tweet))
     return clean_tweets
-
-
-def run_analysis():
-    analyser = TweetAnalyser()
-    final_score = analyser.analyze_tweets(tweets[:100])
-
-    if final_score <= -0.25:
-        status = 'NEGATIVE ❌'
-    elif final_score <= 0.25:
-        status = 'NEUTRAL ?'
-    else:
-        status = 'POSITIVE ✅'
-
-    print(final_score, status)
-    neg, neut, pos = analyser.sentiment_split()
-    print(
-        "{}% negative\n{}% neutral\n{}% positive".format(
-            neg, neut, pos
-        )
-    )
-
 
 def display_cloud():
     wordcloud = PhraseCloud(width=800, height=800,
@@ -201,11 +181,29 @@ class PhraseCloud(WordCloud):
         phrases = get_clean_tweets(phrases)
         return nltk.FreqDist(phrases)
 
+def run_analysis():
+    analyser = TweetAnalyser()
+    final_score = analyser.analyze_tweets(tweets[:100])
 
-# run_analysis()
+    if final_score <= -0.25:
+        status = 'NEGATIVE ❌'
+    elif final_score <= 0.25:
+        status = 'NEUTRAL ?'
+    else:
+        status = 'POSITIVE ✅'
+
+    print(final_score, status)
+    neg, neut, pos = analyser.sentiment_split()
+    print(
+        "{}% negative\n{}% neutral\n{}% positive".format(
+            neg, neut, pos
+        )
+    )
+
+run_analysis()
 # display_cloud()
-word = "obama"
+word = "hillary"
 count = words[word]
 print("Trump said {} {} times".format(word, count))
 # make_tweets(tweets)
-make_tweets_from_word(tweets, word)
+# make_tweets_from_word(tweets, word)
