@@ -10,6 +10,7 @@ class Lukifier:
     def __init__(self, text):
         self.text = text
         self.tag = ""
+        self.score = 0
         self.polarity = self.swn_polarity()
         self.classification = self.classify()
 
@@ -29,7 +30,7 @@ class Lukifier:
 
     def swn_polarity(self):
         """
-        Return a sentiment polarity: 0 = negative, 1 = positive
+        Return a sentiment polarity: -1 = negative, 0 = neutral, 1 = positive
         """
 
         sentiment = 0.0
@@ -57,7 +58,9 @@ class Lukifier:
 
                 synsets = wn.synsets(word, pos=wn_tag)
                 if not synsets:
-                    continue
+                    synsets = wn.synsets(word)
+                    if not synsets:
+                        continue
 
                 # Take the first sense, the most common
                 synset = synsets[0]
@@ -70,14 +73,22 @@ class Lukifier:
         if not tokens_count:
             return 0
 
-        # sum greater than 0 => positive sentiment
-        if sentiment > 0:
-            return 1
+        self.score = sentiment
 
+        # positive sentiment
+        if sentiment > 0.25:
+            return 1
+        
         # negative sentiment
+        elif sentiment < -0.25:
+            return -1
+
+        # neutral sentiment
         return 0
 
     def classify(self):
-        if self.polarity == 0:
+        if self.polarity == 1:
+            return "POSITIVE"
+        elif self.polarity == -1:
             return "NEGATIVE"
-        return "POSITIVE"
+        return "NEUTRAL"
