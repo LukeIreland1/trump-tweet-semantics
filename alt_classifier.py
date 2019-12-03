@@ -11,8 +11,6 @@ from lukifier import Lukifier
 
 DIR_PATH = os.path.dirname(__file__)
 TWEET_PATH = os.path.join(DIR_PATH, "tweets.json")
-tweet_dataset = {}
-word_dataset = {}
 labels = ["POSITIVE", "NEUTRAL", "NEGATIVE"]
 word_features = []
 word_labels = []
@@ -73,39 +71,16 @@ def get_labelled_tweets(tweets):
         if tweet_count % 10 == 0:
             print("Processed {}/{} tweets".format(tweet_count, total_tweets))
 
+
 def get_word_sentiment_prob(word):
     word = clean_tweet(word)
-    word_prob = word_features.count(word)/len(word_features)
-    if word_prob:
-        pos_prob = word_labels.count("POSITIVE")/len(word_features)
-        if pos_prob != 0:
-            pos_post_prob = word_prob/pos_prob
-            word_pos_prob = (pos_post_prob*pos_prob)/word_prob
-        neut_prob = word_labels.count("NEUTRAL")/len(word_features)
-        if neut_prob != 0:
-            neut_post_prob = word_prob/neut_prob
-            word_neut_prob = (neut_post_prob*neut_prob)/word_prob
-        neg_prob = word_labels.count("NEGATIVE")/len(word_features)
-        if neg_prob != 0:
-            neg_post_prob = word_prob/neg_prob
-            word_neg_prob = (neg_post_prob*neg_prob)/word_prob
-        highest = max(word_pos_prob, word_neut_prob, word_neg_prob)
-        if highest != 0:
-            if highest == word_pos_prob:
-                return "POSITIVE"
-            elif highest == word_neut_prob:
-                return "NEUTRAL"
-            else:
-                return "NEGATIVE"
-    return "UNKNOWN WORD"
 
 
 print("Getting tweets")
-tweets = get_tweets()
-tweets = get_clean_tweets(tweets)
+#tweets = get_tweets()
+#tweets = get_clean_tweets(tweets)
 print("Got tweets")
 print("Preparing dataset")
-#get_labelled_tweets(tweets)
+get_labelled_tweets(tweets)
 get_labelled_words(tweets)
 print("Prepared dataset")
-get_word_sentiment_prob("Angry")

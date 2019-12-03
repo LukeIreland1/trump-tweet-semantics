@@ -14,12 +14,16 @@ def test():
         "Hello, how are you?": "POSITIVE",
         "Goodbye forever": "NEGATIVE"
     }
+    output = "Sentence: {} | Expected {} | Actual {} | Score {} | Words {}"
     for sentence in sentences:
-        classification = Lukifier(sentence).classification
+        classifier = Lukifier(sentence)
+        classification = classifier.classification
+        score = classifier.score
         if classification != sentences[sentence]:
             print(
-                "Sentence: {} | Expected {} | Actual {}".format(
-                    sentence, sentences[sentence], classification
+                output.format(
+                    sentence, sentences[sentence], classification, score,
+                    classifier.words
                 )
             )
 

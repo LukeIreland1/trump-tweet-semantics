@@ -11,6 +11,7 @@ class Lukifier:
         self.text = text
         self.tag = ""
         self.score = 0
+        self.words = []
         self.polarity = self.swn_polarity()
         self.classification = self.classify()
 
@@ -26,6 +27,8 @@ class Lukifier:
             return wn.ADV
         elif self.tag.startswith('V'):
             return wn.VERB
+        elif self.tag.startswith('I'):
+            return wn.VERB
         return None
 
     def swn_polarity(self):
@@ -40,8 +43,12 @@ class Lukifier:
         for raw_sentence in raw_sentences:
             tagged_sentence = pos_tag(word_tokenize(raw_sentence))
 
+            negated = False
             for word, tag in tagged_sentence:
                 self.tag = tag
+
+                if word.endswith("n't") or word == "not":
+                    negated = True
 
                 if len(word) <= 2:
                     continue
@@ -66,7 +73,20 @@ class Lukifier:
                 synset = synsets[0]
                 swn_synset = swn.senti_synset(synset.name())
 
-                sentiment += swn_synset.pos_score() - swn_synset.neg_score()
+                pos_score = swn_synset.pos_score()
+                neg_score = swn_synset.neg_score()
+
+                if negated:
+                    pos_score = pos_score*-1
+                    neg_score = neg_score*-1
+
+                if neg_score == pos_score:
+                    pos_score = 0
+
+                diff = pos_score - neg_score
+                self.words.append((word, diff))
+
+                sentiment += diff
                 tokens_count += 1
 
         # judgment call ? Default to positive or negative
@@ -76,11 +96,11 @@ class Lukifier:
         self.score = sentiment
 
         # positive sentiment
-        if sentiment > 0.25:
+        if sentiment >= 0.125:
             return 1
-        
+
         # negative sentiment
-        elif sentiment < -0.25:
+        elif sentiment <= -0.125:
             return -1
 
         # neutral sentiment
