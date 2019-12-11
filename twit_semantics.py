@@ -202,8 +202,8 @@ def run_analysis():
 
 run_analysis()
 # display_cloud()
-word = "hillary"
+word = "obama"
 count = words[word]
 print("Trump said {} {} times".format(word, count))
 # make_tweets(tweets)
-# make_tweets_from_word(tweets, word)
+make_tweets_from_word(tweets, word)
