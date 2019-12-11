@@ -8,13 +8,15 @@ from nltk import WordPunctTokenizer
 from collections import defaultdict
 from lukifier import Lukifier
 
+from sklearn import preprocessing
+
+
 import numpy as np
 
 word_features = []
 word_labels = []
 tweet_features = []
 tweet_labels = []
-
 
 class NaiveBayesClassifier(object):
     def __init__(self, n_gram=1, printing=False):
@@ -177,6 +179,8 @@ def get_labelled_tweets(tweets, total_tweets=1000):
         tweet_count += 1
         if tweet_count % 10 == 0:
             print("Processed {}/{} tweets".format(tweet_count, total_tweets))
+    le = preprocessing.LabelEncoder()
+    tweet_features = le.fit
 
 
 def evaluate_predictions(validation_set, validation_labels, trained_classifier):
