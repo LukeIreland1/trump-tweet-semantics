@@ -2,6 +2,9 @@ from nltk.stem import WordNetLemmatizer
 from nltk.corpus import wordnet as wn
 from nltk.corpus import sentiwordnet as swn
 from nltk import sent_tokenize, word_tokenize, pos_tag
+import nltk
+nltk.download('wordnet')
+nltk.download('sentiwordnet')
 
 lemmatizer = WordNetLemmatizer()
 

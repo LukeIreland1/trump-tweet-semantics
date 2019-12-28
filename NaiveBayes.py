@@ -1,22 +1,27 @@
 import json
 import os
 import pprint
+import re
 import string
 import time
-import re
-from nltk import WordPunctTokenizer
 from collections import defaultdict
-from lukifier import Lukifier
-
-from sklearn import preprocessing
-
 
 import numpy as np
+from nltk import WordPunctTokenizer
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from sklearn.utils import shuffle
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.model_selection import train_test_split
+
+from lukifier import Lukifier
 
 word_features = []
 word_labels = []
 tweet_features = []
 tweet_labels = []
+
 
 class NaiveBayesClassifier(object):
     def __init__(self, n_gram=1, printing=False):
@@ -31,9 +36,9 @@ class NaiveBayesClassifier(object):
         '''
         Computes the prior and the bigdoc (from the book's algorithm)
         :param training_set:
-            a list of all documents of the training set
+            a list of all tweets of the training set
         :param training_labels:
-            a list of labels corresponding to the documents in the training set
+            a list of labels corresponding to the tweets in the training set
         :return:
             None
         '''
@@ -44,10 +49,10 @@ class NaiveBayesClassifier(object):
             if x:
                 self.bigdoc[y].append(x)
 
-    def compute_vocabulary(self, documents):
+    def compute_vocabulary(self, tweets):
         vocabulary = set()
 
-        for doc in documents:
+        for doc in tweets:
             for word in doc.split(" "):
                 vocabulary.add(word.lower())
 
@@ -66,7 +71,7 @@ class NaiveBayesClassifier(object):
         return counts
 
     def train(self, training_set, training_labels, alpha=1):
-        # Get number of documents
+        # Get number of tweets
         N_doc = len(training_set)
 
         # Get vocabulary used in training set
@@ -85,7 +90,7 @@ class NaiveBayesClassifier(object):
 
         # For each class
         for c in all_classes:
-            # Get number of documents for that class
+            # Get number of tweets for that class
             N_c = training_labels.count(c)
 
             # Compute logprior for class
@@ -179,8 +184,6 @@ def get_labelled_tweets(tweets, total_tweets=1000):
         tweet_count += 1
         if tweet_count % 10 == 0:
             print("Processed {}/{} tweets".format(tweet_count, total_tweets))
-    le = preprocessing.LabelEncoder()
-    tweet_features = le.fit
 
 
 def evaluate_predictions(validation_set, validation_labels, trained_classifier):
@@ -226,6 +229,7 @@ def split_data(features, labels):
 
 
 tweets = get_clean_tweets(get_tweets())
+tweets = shuffle(tweets)
 get_labelled_tweets(tweets)
 training_set, training_labels, validation_set, validation_labels = split_data(
     tweet_features, tweet_labels)
