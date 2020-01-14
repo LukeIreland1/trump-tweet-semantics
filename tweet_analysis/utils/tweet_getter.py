@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 from nltk import WordPunctTokenizer
 
-from tweet_analysis import root
-from tweet_analysis.utils.lukifier import Lukifier
+from . import root
+from .lukifier import Lukifier
 
 
 
@@ -18,12 +18,14 @@ class TweetGetter:
         self.tweet_file = root / "resources" / "tweets.json"
 
     def get_tweets(self, filename):
+        print("Getting tweets")
         with open(filename, "r", encoding="utf8") as read_file:
             tweets = json.load(read_file)
         new_tweets = []
         for tweet in tweets:
             if tweet:
                 new_tweets.append(tweet["text"])
+        print("Got tweets")
         return new_tweets
 
 
@@ -47,12 +49,15 @@ class TweetGetter:
 
     def get_clean_tweets(self):
         if not self.tweets:
+            print("Getting clean tweets")
             self.tweets = self.clean_tweets(self.get_tweets(self.tweet_file))
+        print("Got clean tweets")
         return self.tweets
 
 
     def get_clean_tweets_with_scores(self):
         if not self.tweets_with_scores:
+            print("Getting scores")
             if not self.tweets:
                 tweets = self.get_clean_tweets()
             data = {
@@ -66,4 +71,5 @@ class TweetGetter:
                 data['score'].append(classifier.score)
                 data['polarity'].append(classifier.polarity)
             self.tweets_with_scores = pd.DataFrame(data)
-            return self.tweets_with_scores
+        print("Got scores")
+        return self.tweets_with_scores

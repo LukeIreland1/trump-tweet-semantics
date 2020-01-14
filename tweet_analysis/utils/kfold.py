@@ -5,7 +5,7 @@ from tweet_analysis.utils.tweet_getter import TweetGetter
 class KFold():
     def __init__(self):
         tweets = TweetGetter().get_clean_tweets_with_scores()
-        kfold = kf(2, True, 1)
+        kfold = kf(10, True, 1)
         X = tweets.tweet
         y = tweets.polarity
 

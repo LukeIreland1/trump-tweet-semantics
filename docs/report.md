@@ -22,7 +22,7 @@
 
 # 1. Introduction
 
-This project revolves around analysing Donald Trump's twitter in various ways to provide interesting insights to his narrative.
+This project focuses on comparison of Semantic Analysis algorithms and various other forms of Natural Language Processing, with a chosen dataset of Donald Trump's tweets.
 
 Analysis methods include:
 
@@ -66,11 +66,13 @@ I saw guides such as [Basic Binary Sentiment Analysis using NLTK](https://toward
 Eventually, I fell upon this [article](https://www.geeksforgeeks.org/twitter-sentiment-analysis-using-python/)[^7] which used TextBlob to perform sentiment analysis instead.
 TextBlob is a simplified text processing library for Python, and provides a simple API for performing Natural Language Processing tasks, such as speech tagging, noun extraction, classification, translation and, most importantly, sentiment analysis.
 
-I needed more methods of semantic analysis, and came across [Latent Semantic Analysis](https://towardsdatascience.com/latent-semantic-analysis-sentiment-classification-with-python-5f657346f6a3)[^8] (LSA) which also uses a bag of words model. Finally, I decided on using LSA, Random Forests, XGBoost, Logistic Regression and Multilayer Perceptron models to compare to my Naive Bayes classifier.
+I needed more methods of semantic analysis, and came across [Latent Semantic Analysis](https://towardsdatascience.com/latent-semantic-analysis-sentiment-classification-with-python-5f657346f6a3)[^8] (LSA) which also uses a bag of words model. Finally, I decided on using [LSA](https://medium.com/@adi_enasoaie/easy-lsi-pipeline-using-scikit-learn-a073f2484408), Random Forests (used as part of LSA), [XGBoost](https://www.datacamp.com/community/tutorials/xgboost-in-python)[^9], Logistic Regression and Multilayer Perceptron models to compare to my Naive Bayes classifier.
 
-After coming across this article on [algorithm comparison](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^9], I found that creating a tf-idf transformer to use on the initial bag of words model massively boosts accuracy.
+After coming across this article on [algorithm comparison](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^10], I found that creating a tf-idf transformer to use on the initial bag of words model massively boosts accuracy.
 
-For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^9], which I found from [this](https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2)[^10] article attempting the same thing. The article listed multiple approaches, including using a Keras API and k-means clustering to build a Machine Learning model to feed into tweet generators, but that added a significant layer of obscurity to getting truly random tweets each time random tweets are requested. For example, it made it possible to get tweets about Hillary Clinton and North Korea in the same tweet/sentence.
+When implementing my models, I discovered that the fairest, most reproducible method of comparison was using Scikit Learn's [Pipelines](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^10], and began altering my code to minimise the difference between how classifiers are ran. During this process, I learned I wouldn't be able to use Latent Semantic Analysis, as the pipelines used in the comparisons, don't support regression in this way.
+
+For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^11], which I found from [this](https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2)[^12] article attempting the same thing. The article listed multiple approaches, including using a Keras API and k-means clustering to build a Machine Learning model to feed into tweet generators, but that added a significant layer of obscurity to getting truly random tweets each time random tweets are requested. For example, it made it possible to get tweets about Hillary Clinton and North Korea in the same tweet/sentence.
 
 # 3. Parsing
 

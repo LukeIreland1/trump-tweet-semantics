@@ -11,38 +11,7 @@ from keras.models import Sequential
 from keras.preprocessing.text import Tokenizer
 from matplotlib import pyplot
 from pandas import DataFrame
-
-# load doc into memory
-
-
-def get_tweets(filename):
-    with open(filename, "r", encoding="utf8") as read_file:
-        tweets = json.load(read_file)
-    new_tweets = []
-    for tweet in tweets:
-        if tweet:
-            new_tweets.append(tweet["pytxt"])
-    return new_tweets
-
-# turn a doc into clean tokens
-
-
-def clean_doc(doc):
-    # split into tokens by white space
-    tokens = doc.split()
-    # remove punctuation from each token
-    table = str.maketrans('', '', punctuation)
-    tokens = [w.translate(table) for w in tokens]
-    # remove remaining tokens that are not alphabetic
-    tokens = [word for word in tokens if word.isalpha()]
-    # filter out stop words
-    stop_words = set(stopwords.words('english'))
-    tokens = [w for w in tokens if not w in stop_words]
-    # filter out short tokens
-    tokens = [word for word in tokens if len(word) > 1]
-    return tokens
-
-# load doc, clean and return line of tokens
+from tweet_analysis.utils.tweet_getter import TweetGetter
 
 
 def doc_to_line(filename, vocab):
@@ -55,8 +24,6 @@ def doc_to_line(filename, vocab):
     return ' '.join(tokens)
 
 # load all docs in a directory
-
-
 def process_docs(directory, vocab, is_trian):
     lines = list()
     # walk through all files in the folder
@@ -113,8 +80,7 @@ def prepare_data(train_docs, test_docs, mode):
 
 
 # load the vocabulary
-tweet_file = 'tweets.json'
-tweets = get_tweets(tweet_file)
+tweets = TweetGetter().get_clean_tweets()
 vocab = []
 for tweet in tweets:
     vocab += tweet.split()
