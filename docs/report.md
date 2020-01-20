@@ -22,30 +22,47 @@
 
 # 1. Introduction
 
-This project focuses on comparison of Semantic Analysis algorithms and various other forms of Natural Language Processing, with a chosen dataset of Donald Trump's tweets.
+This project focuses on comparison of Sentiment Analysis algorithms and various other forms of Natural Language Processing(NLP), with a chosen dataset of Donald Trump's tweets.
+
+Semantic Analysis is classifying text into various classifications. In this case, it is into 3 classes: negative, neutral and positive. Natural Language Processing is the subfield of linguistics and computer science that looks at how computers process and analyze speech and text.
 
 Analysis methods include:
-
 - Frequency Distribution
 - Word Clouds
 - Sentiment Analysis
 - Tweet Generation
 
-These methods will be presented as a web page via PonyORM
+Frequency Distribution is a form of NLP that looks at the frequency of words and phrases within a given corpus.
+
+Word Clouds provide visual representations of the frequency of words and phrases within a given corpus
+
+Tweet Generation typically involves using Markov chains, to replicate the prose within a corpora, and use that understanding to generate tweets that have the same prose as the original corpora.
+
+Markov chains are models that describe the sequence of possible events, and their possibilities are dependent on the state set in the previous event.
+
+The output from these analysis methods will be presented as a web page via Flask, which is a web framework for Python, and PonyORM, which is a object relational manager for Python.
 
 ## 1.1. Background
 
-I was interested analyzing Trump's tweets for semantics due to his controversial nature. It would be interesting to see, given what the media often say about him, if he truly is a bad/negative person.
+I was interested analyzing Trump's tweets for sentiment due to his controversial nature. It would be interesting to see, given what the media often say about him, if he truly is a bad/negative person via unbiased sentiment analysis, and letting a machine look just at the words used, rather than the character of the person saying them.
+
+I had also imagined it would be entertaining to analyse his tweets in other was, such as word clouds, frequency distribution and tweet generation, to see if he is overly repetitive of words or phrases, such as MAGA/Make America Great Again, and to see if I could make tweets that are very similar to his style, in order to see if it's possible to capture (part of) his cognitive function in a Python function.
+
+While looking at the various algorithms available to perform this sort of task, I thought it would be worthwhile to evaluate which of them works best on tweets, which are typically informal, 280 charcter long posts submitted to Twitter.
 
 ## 1.2. Aim
 
-The point of this project will be to perform various types of analysis on the language used in Trump's tweet to see if any interesting trends arise.
+The point of this project will be to perform various types of analysis on the language used in Trump's tweet to see if any interesting trends arise. Mainly, this project seeks to inform and entertain people interested in Trump, for either good or bad reasons.
+
+I will also be evaluating the performance of sentiment analysis algorithms.
 
 ## 1.3. Objectives
 
-1. Perform frequency distribution on variable length phrases
-2. Render word clouds of phrases
-3. Analyse whole tweets for semantics
+1. Perform frequency distribution on variable length phrases.
+2. Render word clouds of phrases.
+3. Analyse whole tweets for sentiment.
+4. Use analysers in comparison to see which is the most accurate and the fastest.
+5. Create tweets using data from Trump's Twitter account.
 
 # 2. Literature Review
 
