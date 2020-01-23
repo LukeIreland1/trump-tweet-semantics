@@ -24,7 +24,7 @@
 
 This project focuses on comparison of Sentiment Analysis algorithms and various other forms of Natural Language Processing(NLP), with a chosen dataset of Donald Trump's tweets.
 
-Semantic Analysis is classifying text into various classifications. In this case, it is into 3 classes: negative, neutral and positive. Natural Language Processing is the subfield of linguistics and computer science that looks at how computers process and analyze speech and text.
+Sentiment Analysis is classifying text into various classifications. In this case, it is into 3 classes: negative, neutral and positive. Natural Language Processing is the subfield of linguistics and computer science that looks at how computers process and analyze speech and text. Sentiment Analysis is a form of NLP.
 
 Analysis methods include:
 - Frequency Distribution
@@ -32,9 +32,9 @@ Analysis methods include:
 - Sentiment Analysis
 - Tweet Generation
 
-Frequency Distribution is a form of NLP that looks at the frequency of words and phrases within a given corpus.
+Frequency Distribution is another form of NLP that looks at the frequency of words and phrases within a given corpus. It is useful to be able to remove stopwords (words that don't have any sentiment) from a corpus, and to highlight which words are more important in deciding the general sentiment of a given corpus, or the specific sentiment of a given sentence or paragraph.
 
-Word Clouds provide visual representations of the frequency of words and phrases within a given corpus
+Word Clouds provide visual representations of the frequency of words and phrases within a given corpus.
 
 Tweet Generation typically involves using Markov chains, to replicate the prose within a corpora, and use that understanding to generate tweets that have the same prose as the original corpora.
 
@@ -44,25 +44,27 @@ The output from these analysis methods will be presented as a web page via Flask
 
 ## 1.1. Background
 
-I was interested analyzing Trump's tweets for sentiment due to his controversial nature. It would be interesting to see, given what the media often say about him, if he truly is a bad/negative person via unbiased sentiment analysis, and letting a machine look just at the words used, rather than the character of the person saying them.
+I was interested analyzing Trump's tweets for sentiment due to his controversial nature. It would be interesting to see, given what the media often say about him, if he truly is a bad (negative) person via unbiased (relative to humans, who are emotional and often irrational) sentiment analysis, and letting a machine look just at the words used, rather than the character of the person saying them.
 
-I had also imagined it would be entertaining to analyse his tweets in other was, such as word clouds, frequency distribution and tweet generation, to see if he is overly repetitive of words or phrases, such as MAGA/Make America Great Again, and to see if I could make tweets that are very similar to his style, in order to see if it's possible to capture (part of) his cognitive function in a Python function.
+I had also imagined it would be entertaining to analyse his tweets in other was, such as word clouds, frequency distribution and tweet generation, to see if he is overly repetitive of words or phrases, such as "MAGA" or "Make America Great Again", and to see if I could make tweets that are very similar to his style, in order to see if it's possible to capture (part of) his cognitive function in a Python function.
 
-While looking at the various algorithms available to perform this sort of task, I thought it would be worthwhile to evaluate which of them works best on tweets, which are typically informal, 280 charcter long posts submitted to Twitter.
+While looking at the various algorithms available to perform this sort of task, I thought it would be worthwhile to evaluate which of them works best on tweets, which are typically informal, 280 character long posts submitted to Twitter.
 
 ## 1.2. Aim
 
-The point of this project will be to perform various types of analysis on the language used in Trump's tweet to see if any interesting trends arise. Mainly, this project seeks to inform and entertain people interested in Trump, for either good or bad reasons.
+The aim of this project is to perform various types of analysis on the language used in Trump's tweet to see if any interesting trends arise. Mainly, this project seeks to inform and entertain people interested in Trump, for either good or bad reasons.
 
-I will also be evaluating the performance of sentiment analysis algorithms.
+I will also be evaluating the performance of sentiment analysis algorithms on their speed and accuracy.
 
 ## 1.3. Objectives
 
 1. Perform frequency distribution on variable length phrases.
 2. Render word clouds of phrases.
 3. Analyse whole tweets for sentiment.
-4. Use analysers in comparison to see which is the most accurate and the fastest.
-5. Create tweets using data from Trump's Twitter account.
+4. Create unbiased classifer to initally label dataset
+5. Find sentiment classifer algorithms
+6. Use analysers in comparison to see which is the most accurate and the fastest.
+7. Create tweets using data from Trump's Twitter account.
 
 # 2. Literature Review
 
@@ -83,11 +85,11 @@ I saw guides such as [Basic Binary Sentiment Analysis using NLTK](https://toward
 Eventually, I fell upon this [article](https://www.geeksforgeeks.org/twitter-sentiment-analysis-using-python/)[^7] which used TextBlob to perform sentiment analysis instead.
 TextBlob is a simplified text processing library for Python, and provides a simple API for performing Natural Language Processing tasks, such as speech tagging, noun extraction, classification, translation and, most importantly, sentiment analysis.
 
-I needed more methods of semantic analysis, and came across [Latent Semantic Analysis](https://towardsdatascience.com/latent-semantic-analysis-sentiment-classification-with-python-5f657346f6a3)[^8] (LSA) which also uses a bag of words model. Finally, I decided on using [LSA](https://medium.com/@adi_enasoaie/easy-lsi-pipeline-using-scikit-learn-a073f2484408), Random Forests (used as part of LSA), [XGBoost](https://www.datacamp.com/community/tutorials/xgboost-in-python)[^9], Logistic Regression and Multilayer Perceptron models to compare to my Naive Bayes classifier.
+I needed more methods of sentiment analysis, so I decided on using [LSA](https://medium.com/@adi_enasoaie/easy-lsi-pipeline-using-scikit-learn-a073f2484408), Random Forests (used as part of LSA), [XGBoost](https://www.datacamp.com/community/tutorials/xgboost-in-python)[^9], Logistic Regression and Multilayer Perceptron models to compare to my Naive Bayes classifier.
 
 After coming across this article on [algorithm comparison](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^10], I found that creating a tf-idf transformer to use on the initial bag of words model massively boosts accuracy.
 
-When implementing my models, I discovered that the fairest, most reproducible method of comparison was using Scikit Learn's [Pipelines](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^10], and began altering my code to minimise the difference between how classifiers are ran. During this process, I learned I wouldn't be able to use Latent Semantic Analysis, as the pipelines used in the comparisons, don't support regression in this way.
+When implementing my models, I discovered that the fairest, most reproducible method of comparison was using Scikit Learn's [Pipelines](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^10], and began altering my code to minimise the difference between how classifiers are ran.
 
 For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^11], which I found from [this](https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2)[^12] article attempting the same thing. The article listed multiple approaches, including using a Keras API and k-means clustering to build a Machine Learning model to feed into tweet generators, but that added a significant layer of obscurity to getting truly random tweets each time random tweets are requested. For example, it made it possible to get tweets about Hillary Clinton and North Korea in the same tweet/sentence.
 
