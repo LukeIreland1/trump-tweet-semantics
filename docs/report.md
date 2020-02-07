@@ -2,6 +2,7 @@
 <md-style name="latex"></md-style>
 
 # Table of Contents <!-- omit in toc -->
+
 - [1. Introduction](#1-introduction)
   - [1.1. Background](#11-background)
   - [1.2. Aim](#12-aim)
@@ -27,6 +28,7 @@ This project focuses on comparison of Sentiment Analysis algorithms and various 
 Sentiment Analysis is classifying text into various classifications. In this case, it is into 3 classes: negative, neutral and positive. Natural Language Processing is the subfield of linguistics and computer science that looks at how computers process and analyze speech and text. Sentiment Analysis is a form of NLP.
 
 Analysis methods include:
+
 - Frequency Distribution
 - Word Clouds
 - Sentiment Analysis
@@ -63,7 +65,7 @@ I will also be evaluating the performance of sentiment analysis algorithms on th
 3. Analyse whole tweets for sentiment.
 4. Create unbiased classifer to initally label dataset
 5. Find sentiment classifer algorithms
-6. Use analysers in comparison to see which is the most accurate and the fastest.
+6. Compare classification algorithms to see which is the most accurate and the fastest.
 7. Create tweets using data from Trump's Twitter account.
 
 # 2. Literature Review
@@ -85,11 +87,23 @@ I saw guides such as [Basic Binary Sentiment Analysis using NLTK](https://toward
 Eventually, I fell upon this [article](https://www.geeksforgeeks.org/twitter-sentiment-analysis-using-python/)[^7] which used TextBlob to perform sentiment analysis instead.
 TextBlob is a simplified text processing library for Python, and provides a simple API for performing Natural Language Processing tasks, such as speech tagging, noun extraction, classification, translation and, most importantly, sentiment analysis.
 
-I needed more methods of sentiment analysis, so I decided on using [LSA](https://medium.com/@adi_enasoaie/easy-lsi-pipeline-using-scikit-learn-a073f2484408), Random Forests (used as part of LSA), [XGBoost](https://www.datacamp.com/community/tutorials/xgboost-in-python)[^9], Logistic Regression and Multilayer Perceptron models to compare to my Naive Bayes classifier.
+I needed more methods of sentiment analysis, so I decided on using [LSA](https://medium.com/@adi_enasoaie/easy-lsi-pipeline-using-scikit-learn-a073f2484408), Random Forests (used as both part of LSA, and independently), [XGBoost](https://www.datacamp.com/community/tutorials/xgboost-in-python)[^9], Logistic Regression and Multilayer Perceptron models to compare to my Naive Bayes classifier.
+
+Latent Sentiment Analysis is one SA (Sentiment Analysis) technique that scores a corpus based on an assumption meaning similar meaning words will appear in similar pieces of text.
+
+Naive Bayes classifiers are simple probabilistic classifers which applies Bayes' theorem of naive assumptions between the features.
+
+Random Forest classifiers operate by constructing multiple decision trees at training time, and uses mode of each individual tree to calculate a class.
+
+XGBoost is a gradient boosting algorithm that uses proportional shrinking of leaf nodes, smart tree penalization and differentiation to improve it's understanding of each of the classes used in training.
+
+A Multilayer Perceptron is a type of feedforward artificial neural network, consisting of an input layer, a hidden layer and an output layer. Each non-input node is a neuron that uses a nonlinear activation function, and uses a supervised learning technique called backpropagation for training.
+
+Logisitic Regression is a classifier model that uses a logistic function to model a dependent variable. It measures the relationship between the categorical dependent variable and one or more independent variables by estamating probabilities using a logistic function, which is the cumulative distribution function of logistic regression.
 
 After coming across this article on [algorithm comparison](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^10], I found that creating a tf-idf transformer to use on the initial bag of words model massively boosts accuracy.
 
-When implementing my models, I discovered that the fairest, most reproducible method of comparison was using Scikit Learn's [Pipelines](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^10], and began altering my code to minimise the difference between how classifiers are ran, to isolate the performance of the classifier down to the algorithm itself and not any pre-processing.
+When implementing my models, I discovered that the fairest, most reproducible method of comparison was using Scikit Learn's [Pipelines](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^10], and began altering my code to minimise the difference between how classifiers are ran, to isolate the performance of the classifier down to the algorithm itself and not any pre-processing. I had to cut Latent Sentiment Analysis as it didn't fit this streamlined format, due to the way it retrospectively trains itself.
 
 For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^11], which I found from [this](https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2)[^12] article attempting the same thing. The article listed multiple approaches, including using a Keras API and k-means clustering to build a Machine Learning model to feed into tweet generators, but that added a significant layer of obscurity to getting truly random tweets each time random tweets are requested. For example, it made it possible to get tweets about Hillary Clinton and North Korea in the same tweet/sentence.
 
@@ -116,7 +130,7 @@ I decided to choose rather narrow ranges for each sentiment class.
 # 7. Word Cloud
 
 Here is a word cloud I created using the Python library wordcloud.
-![Figure 1](../images/wordcloud4.png "Figure 1")*Figure 1* - WordCloud of phrases of length 4.
+![Figure 1](../images/wordcloud4.png "Figure 1")_Figure 1_ - WordCloud of phrases of length 4.
 
 # 8. Frequency Distribution
 
