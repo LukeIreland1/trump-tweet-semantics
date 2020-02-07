@@ -67,4 +67,4 @@ scores["Multilayer Perceptron"] = avg(multilayer_perceptron_score)
 scores = {k: v for k, v in sorted(scores.items(), key=lambda item: item[1])}
 
 for name, score in scores.items():
-    print("Name:\t{}\tScore:\t{}\tTime:\t{}s".format(name, score, times[name]))
+    print("Name:\t{}\Accuracy:\t{}\tTime:\t{}s".format(name, score, times[name]))
