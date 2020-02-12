@@ -6,6 +6,7 @@ from utils.tf_idf import TfidfTransformer
 
 class RandomForest:
     def __init__(self):
+        self.name = "Random Forest"
         self.pipeline = Pipeline(
             steps=[
                 ('tfidf', TfidfTransformer()),

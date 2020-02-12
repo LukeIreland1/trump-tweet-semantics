@@ -6,6 +6,7 @@ from utils.tf_idf import TfidfTransformer
 
 class LogisticRegression:
     def __init__(self):
+        self.name = "Logistic Regression"
         self.pipeline = Pipeline(
             steps=[
                 ('tfidf', TfidfTransformer()),

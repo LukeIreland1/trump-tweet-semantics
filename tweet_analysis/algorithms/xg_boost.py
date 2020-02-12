@@ -6,9 +6,10 @@ from utils.tf_idf import TfidfTransformer
 
 class XGBoost:
     def __init__(self):
+        self.name = "XGBoost"
         self.pipeline = Pipeline(
             steps=[
                 ('tfidf', TfidfTransformer()),
-                ('xgboost', xgb.XGBClassifier(objective='multi:softmax'))
+                ('xgboost', xgb.XGBClassifier(objective='multi:softmax', num_class=3))
             ]
         )

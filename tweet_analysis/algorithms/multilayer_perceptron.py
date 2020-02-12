@@ -6,6 +6,7 @@ from utils.tf_idf import TfidfTransformer
 
 class MultilayerPerceptron:
     def __init__(self):
+        self.name = "Multilayer Perceptron"
         self.pipeline = Pipeline(
             steps=[
                 ('tfidf', TfidfTransformer()),
