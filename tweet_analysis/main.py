@@ -9,7 +9,6 @@ from algorithms.random_forest import RandomForest
 from algorithms.xg_boost import XGBoost
 from algorithms.naive_bayes import NaiveBayes
 from algorithms.stochastic_gradient_descent import StochasticGD
-from algorithms.latent_sa import LatentSA
 from utils.tweet_getter import TweetGetter
 
 
@@ -25,7 +24,7 @@ def wrapper(func, *args, **kwargs):
 
 def run_algorithm(function):
     start = timer()
-    accuracy = function()
+    accuracy = avg(function())
     time = timer() - start
     return accuracy, time
 
@@ -46,10 +45,12 @@ algorithms = [XGBoost(), LogisticRegression(), RandomForest(),
               MultilayerPerceptron(), NaiveBayes(), StochasticGD()]
 
 for algorithm in algorithms:
+    print("Training {}".format(algorithm.name))
     evaluate(algorithm)
 
-algorithms = sorted(algorithms, key=lambda algorithm: algorithm.accuracy, reverse=True)
+algorithms.sort(key=lambda x: x.accuracy, reverse=True)
 
 for algorithm in algorithms:
     print("Name:\t{}\tAccuracy:\t{}\tTime:\t{}".format(
         algorithm.name, algorithm.accuracy, algorithm.time))
+
