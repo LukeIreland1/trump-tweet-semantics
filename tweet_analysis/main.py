@@ -31,13 +31,13 @@ def run_algorithm(function):
 
 def evaluate(algorithm):
     function = wrapper(
-        cross_val_score, algorithm.pipeline, X, y, cv=5, scoring='accuracy')
+        cross_val_score, algorithm.pipeline, X, y, cv=10, scoring='accuracy')
     accuracy, time = run_algorithm(function)
     algorithm.accuracy = accuracy
     algorithm.time = time
 
 
-tweets = TweetGetter().get_clean_tweets_with_scores()
+tweets = TweetGetter().get_standardised_tweets()
 X = tweets.tweet
 y = tweets.polarity
 
