@@ -1,7 +1,22 @@
 <md-cover title='Trump Tweet Sentiment Analysis' author='Luke Ireland'></md-cover>
 <md-style name="latex"></md-style>
 
-<!-- TOC -->autoauto- [Table of Contents <!-- omit in toc -->](#table-of-contents----omit-in-toc---)auto- [1. Introduction](#1-introduction)auto    - [1.1. Background](#11-background)auto    - [1.2. Aim](#12-aim)auto    - [1.3. Objectives](#13-objectives)auto- [2. Literature Review](#2-literature-review)auto- [3. Pre-processing](#3-pre-processing)auto- [4. Sentiment Classification](#4-sentiment-classification)auto- [5. Word Cloud](#5-word-cloud)auto- [6. Frequency Distribution](#6-frequency-distribution)auto- [7. Tweet Generator](#7-tweet-generator)auto- [8. Web Application Presentation](#8-web-application-presentation)auto- [9. Evaluation](#9-evaluation)auto- [10. Conclusion](#10-conclusion)auto- [11. References](#11-references)autoauto<!-- /TOC -->
+
+# Table of Contents <!-- omit in toc -->
+- [1. Introduction](#1-introduction)
+  - [1.1. Background](#11-background)
+  - [1.2. Aim](#12-aim)
+  - [1.3. Objectives](#13-objectives)
+- [2. Literature Review](#2-literature-review)
+- [3. Pre-processing](#3-pre-processing)
+- [4. Sentiment Classification](#4-sentiment-classification)
+- [5. Word Cloud](#5-word-cloud)
+- [6. Frequency Distribution](#6-frequency-distribution)
+- [7. Tweet Generator](#7-tweet-generator)
+- [8. Web Application Presentation](#8-web-application-presentation)
+- [9. Evaluation](#9-evaluation)
+- [10. Conclusion](#10-conclusion)
+- [11. References](#11-references)
 
 # 1. Introduction
 This project focuses on comparison of Sentiment Analysis algorithms and various other forms of Natural Language Processing(NLP), with a chosen dataset of Donald Trump's tweets.
