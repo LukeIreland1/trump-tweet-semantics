@@ -77,6 +77,8 @@ for algorithm in algorithms:
         algorithm.name, algorithm.accuracy, algorithm.time))
     plt.plot(algorithm.accuracy, algorithm.time,
                 "{}o".format(get_colour_code()), label=algorithm.name)
-    plt.legend(loc="upper left")
+    plt.xlabel("Accuracy")
+    plt.ylabel("Time (s)")
+    plt.legend(loc="upper right")
 
-plt.savefig("output.png")
+plt.savefig("output.svg")
