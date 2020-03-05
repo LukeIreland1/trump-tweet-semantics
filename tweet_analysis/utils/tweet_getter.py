@@ -18,7 +18,7 @@ class TweetGetter:
 
     def get_tweets(self, filename):
         print("Getting tweets")
-        with open(filename, "r", encoding="utf8") as read_file:
+        with filename.open() as read_file:
             tweets = json.load(read_file)
         new_tweets = []
         for tweet in tweets:
