@@ -1,15 +1,34 @@
+import concurrent.futures
 from timeit import default_timer as timer
 
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.model_selection import cross_val_score
 
 from algorithms.logistic_regression import LogisticRegression
 from algorithms.multilayer_perceptron import MultilayerPerceptron
-from algorithms.random_forest import RandomForest
-from algorithms.xg_boost import XGBoost
 from algorithms.naive_bayes import NaiveBayes
+from algorithms.random_forest import RandomForest
 from algorithms.stochastic_gradient_descent import StochasticGD
+from algorithms.xg_boost import XGBoost
 from utils.tweet_getter import TweetGetter
+
+
+colours = {
+    'b': False,
+    'g': False,
+    'r': False,
+    'c': False,
+    'm': False,
+    'y': False
+}
+
+
+def get_colour_code():
+    for colour in colours:
+        if not colours[colour]:
+            colours[colour] = True
+            return colour
 
 
 def avg(scores):
@@ -44,13 +63,20 @@ y = tweets.polarity
 algorithms = [XGBoost(), LogisticRegression(), RandomForest(),
               MultilayerPerceptron(), NaiveBayes(), StochasticGD()]
 
-for algorithm in algorithms:
-    print("Training {}".format(algorithm.name))
-    evaluate(algorithm)
+with concurrent.futures.ThreadPoolExecutor() as executor:
+    futures = {executor.submit(evaluate, algorithm): algorithm
+               for algorithm in algorithms}
+    for future in concurrent.futures.as_completed(futures):
+        algorithm = futures[future]
+        print("Training {}".format(algorithm.name))
 
 algorithms.sort(key=lambda x: x.accuracy, reverse=True)
 
 for algorithm in algorithms:
     print("Name:\t{}\tAccuracy:\t{}\tTime:\t{}".format(
         algorithm.name, algorithm.accuracy, algorithm.time))
+    plt.plot(algorithm.accuracy, algorithm.time,
+                "{}o".format(get_colour_code()), label=algorithm.name)
+    plt.legend(loc="upper left")
 
+plt.savefig("output.png")

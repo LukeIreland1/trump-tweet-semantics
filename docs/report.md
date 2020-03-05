@@ -3,22 +3,24 @@
 
 
 # Table of Contents <!-- omit in toc -->
+
 - [1. Introduction](#1-introduction)
   - [1.1. Background](#11-background)
   - [1.2. Aim](#12-aim)
   - [1.3. Objectives](#13-objectives)
 - [2. Literature Review](#2-literature-review)
-- [3. Pre-processing](#3-pre-processing)
+- [3. Data Pre-processing](#3-data-pre-processing)
 - [4. Sentiment Classification](#4-sentiment-classification)
-- [5. Word Cloud](#5-word-cloud)
+- [5. Comparison Implementation](#5-comparison-implementation)
 - [6. Frequency Distribution](#6-frequency-distribution)
+- [6. Word Cloud](#6-word-cloud)
 - [7. Tweet Generator](#7-tweet-generator)
-- [8. Web Application Presentation](#8-web-application-presentation)
-- [9. Evaluation](#9-evaluation)
-- [10. Conclusion](#10-conclusion)
-- [11. References](#11-references)
+- [8. Evaluation](#8-evaluation)
+- [9. Conclusion](#9-conclusion)
+- [10. References](#10-references)
 
 # 1. Introduction
+
 This project focuses on comparison of Sentiment Analysis algorithms and various other forms of Natural Language Processing(NLP), with a chosen dataset of Donald Trump's tweets.
 
 Sentiment Analysis is classifying text into various classifications. In this case, it is into 3 classes: negative, neutral and positive. Natural Language Processing is the subfield of linguistics and computer science that looks at how computers process and analyze speech and text. Sentiment Analysis is a form of NLP.
@@ -66,6 +68,11 @@ I will also be evaluating the performance of sentiment analysis algorithms on th
 
 # 2. Literature Review
 
+TODO:
+
+1. Add stochastic gradient descent info
+2. Make equations explicit
+
 I decided to use Python as it's my strongest language, plus it's flexibility across platforms and level of API support makes it an obvious choice.
 
 I originally planned to use Twitter's API via [Twitter Search](https://github.com/ckoepp/TwitterSearch)[^1], but I couldn't use it due to being unable to apply for a Twitter Developer Account.
@@ -78,19 +85,19 @@ TextBlob is a simplified text processing library for Python, and provides a simp
 
 I needed more methods of sentiment analysis, so I decided on using [Latent Sentiment Analysis(LSA)](https://medium.com/@adi_enasoaie/easy-lsi-pipeline-using-scikit-learn-a073f2484408), Random Forests (used as both part of LSA, and independently), [XGBoost](https://www.datacamp.com/community/tutorials/xgboost-in-python)[^9], Logistic Regression and Multilayer Perceptron models to compare to my Naive Bayes classifier.
 
-Latent Sentiment Analysis(LSA) is one SA (Sentiment Analysis) technique that scores a corpus based on an assumption meaning similar meaning words will appear in similar pieces of text.[^10]
+Latent Sentiment Analysis(LSA) is one SA (Sentiment Analysis) technique that scores a corpus based on an assumption meaning similar meaning words will appear in similar pieces of text[^10].
 
-Naive Bayes classifiers are simple probabilistic classifers which applies Bayes' theorem of naive assumptions between the features. I will be using a Multinomial Naive Bayes classifier, which uses feature vectors in the form of histograms, which count the number of times an event (in this case - sentiment) was observed in a particular instance (in this case - document).[^11]
+Naive Bayes classifiers are simple probabilistic classifers which applies Bayes' theorem of naive assumptions between the features. I will be using a Multinomial Naive Bayes classifier, which uses feature vectors in the form of histograms, which count the number of times an event (in this case - sentiment) was observed in a particular instance (in this case - document)[^11].
 
-Random Forest classifiers operate by constructing multiple decision trees at training time, and uses the mode of each individual tree's classification of the input vector (in this case - array of sentiments) to decide upon a class. A decision tree is a tree that consists of parent nodes that contain decisions or clauses, and leaf nodes with a classification.[^12]
+Random Forest classifiers operate by constructing multiple decision trees at training time, and uses the mode of each individual tree's classification of the input vector (in this case - array of sentiments) to decide upon a class. A decision tree is a tree that consists of parent nodes that contain decisions or clauses, and leaf nodes with a classification[^12].
 
-XGBoost classifier is a gradient boosting algorithm that uses proportional shrinking of leaf nodes, smart tree penalization and differentiation to improve it's understanding of each of the classes used in training. It uses a variety of parameters requiring optimisation to improve accuracy. Gradient boosting algorithms produce prediction models in the form of an ensemble weak prediction model, typically decision trees (similar to random forest). The models are then built in stages, and generalised by allowing optimisation of an abitrary differentiable loss function, often softmax for multiclass classifiers.[^13]
+XGBoost classifier is a gradient boosting algorithm that uses proportional shrinking of leaf nodes, smart tree penalization and differentiation to improve it's understanding of each of the classes used in training. It uses a variety of parameters requiring optimisation to improve accuracy. Gradient boosting algorithms produce prediction models in the form of an ensemble weak prediction model, typically decision trees (similar to random forest). The models are then built in stages, and generalised by allowing optimisation of an abitrary differentiable loss function, often softmax for multiclass classifiers[^13].
 
-A Multilayer Perceptron is a type of feedforward artificial neural network, consisting of an input layer, a hidden layer and an output layer. Each non-input node is a neuron that uses a nonlinear activation function, and uses a supervised learning technique called backpropagation, similar to the least mean squares algorithm, for training. Learning is performed by changing the connection weights between the layers, based on the amount of error between the prediction and actual class.[^14]
+A Multilayer Perceptron is a type of feedforward artificial neural network, consisting of an input layer, a hidden layer and an output layer. Each non-input node is a neuron that uses a nonlinear activation function, and uses a supervised learning technique called backpropagation, similar to the least mean squares algorithm, for training. Learning is performed by changing the connection weights between the layers, based on the amount of error between the prediction and actual class[^14].
 
 Logisitic Regression is a classifier model that uses a logistic function to model a dependent variable. It measures the relationship between the categorical dependent variable and one or more independent variables by estamating probabilities using a logistic function, which is the cumulative distribution function of logistic regression.
 
-I will specifically be using multinomial logistic regression, as I have 3 classes. The score vector for a given document (tweet) is in the format: scores(X,k) = β<sub>k</sub>\*X, where X is a vector of the words that make up the tweet, and β is a vector of weights corresponding to outcome (class) k. This score vector is then used by the softmax function to calculate a probability of the tweet belonging to that sentiment.[^15]
+I will specifically be using multinomial logistic regression, as I have 3 classes. The score vector for a given document (tweet) is in the format: scores(X,k) = β<sub>k</sub>\*X, where X is a vector of the words that make up the tweet, and β is a vector of weights corresponding to outcome (class) k. This score vector is then used by the softmax function to calculate a probability of the tweet belonging to that sentiment[^15].
 
 Softmax is simply: e<sup>scores</sup>/sum(scores), where scores a vector where each element corresponds to a word and sentiment prediction.
 
@@ -102,11 +109,20 @@ When implementing my models, I discovered that the fairest, most reproducible me
 
 I decided to standardise my scores using the z-score method of `score = (raw_score - mean)/standard deviation`.
 
-I also wanted to use k-fold cross validation on the data, which involves splitting the data into k equal sized partitions, where one of the partitions are used as validation data for testing the model. This split repeats k times, in a way which every partition is used as the validation at least one, then averaged to produce a single estimation. [^17]
+I also wanted to use k-fold cross validation on the data, which involves splitting the data into k equal sized partitions, where one of the partitions is used as validation data for testing the model. This split repeats k times, in a way in which every partition is used as the validation at least one, then averaged to produce a single estimation[^17].
 
 For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^18], which I found from [this](https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2)[^19] article attempting the same thing. The article listed multiple approaches, including using a Keras API and k-means clustering to build a Machine Learning model to feed into tweet generators, but that added a significant layer of obscurity, and made less coherent tweets.
 
-# 3. Pre-processing
+# 3. Data Pre-processing
+
+TODO:
+
+1. Explain pandas
+2. Explain dataframe
+3. Stemming/Lemmatization
+4. Sentiwordnet
+5. Wordnet
+6. Tokenization
 
 I used Python's JSON library to load the .json file into the program as a dict. The dict contained lots of useful information, but I was actually only interested in the tweets themselves, so I extracted them, cleaned them up by removing anything that wasn't a word (URLs mostly, numbers, symbols) and fed them into my classifer, which used sentiment scores for each individual word in a tweet to build up a score for the tweet, and used negation when words were used next to modfiers like not and no.
 
@@ -120,30 +136,37 @@ I decided to choose rather narrow ranges for each sentiment class.
 - Between +0.125 and -0.125 = Neutral
 - More than +0.125 = Positive
 
-# 5. Word Cloud
+# 5. Comparison Implementation
 
-Here is a word cloud I created using the Python library wordcloud.
-![Figure 1](../images/wordcloud4.png "Figure 1")_Figure 1_ - WordCloud of phrases of length 4.
+TODO:
+
+1. Talk about algorithms used
+2. Talk about pipelines
 
 # 6. Frequency Distribution
 
 I used NLTK to look at the most common words and phrases of different lengths.
 
+# 6. Word Cloud
+
+Here is a word cloud I created using the Python library wordcloud.
+![Figure 1](../images/wordcloud4.png "Figure 1")_Figure 1_ - WordCloud of phrases of length 4.
+
 # 7. Tweet Generator
 
 I created my own class using Markovify[^8], that would force the generator to generate tweets containing a given user word.
 
-# 8. Web Application Presentation
+# 8. Evaluation
 
-I used PonyORM to...
+Results and findings:
 
-# 9. Evaluation
+TODO:
 
-Results and findings
+1. Add results
 
-# 10. Conclusion
+# 9. Conclusion
 
-# 11. References
+# 10. References
 
 [^1]: https://github.com/ckoepp/TwitterSearch
 [^2]: http://www.trumptwitterarchive.com/archive
