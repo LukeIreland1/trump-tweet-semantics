@@ -9,7 +9,7 @@ from textblob import TextBlob
 from wordcloud import WordCloud, STOPWORDS
 
 DIR_PATH = os.path.dirname(__file__)
-TWEET_PATH = os.path.join(DIR_PATH, "tweets.json")
+TWEET_PATH = os.path.join(DIR_PATH, "../resources/tweets.json")
 
 # TODO: Incoroporate new custom semantic/classifer from lukifier
 
@@ -64,8 +64,9 @@ def clean_tweet(tweet):
     link_removed = re.sub('https?://[A-Za-z0-9./]+', '', user_removed)
     number_removed = re.sub('[^a-zA-Z]', ' ', link_removed)
     lower_case_tweet = number_removed.lower()
+    fixed_tweet = re.sub("&amp", "&", lower_case_tweet)
     tok = WordPunctTokenizer()
-    words = tok.tokenize(lower_case_tweet)
+    words = tok.tokenize(fixed_tweet)
     clean_tweet = (' '.join(words)).strip()
     return clean_tweet
 
@@ -100,7 +101,7 @@ def make_tweets(tweets):
 
     # Print five randomly-generated sentences
     for i in range(5):
-        print(text_model.make_short_sentence(140))
+        print(text_model.make_short_sentence(280))
 
 
 def make_tweets_from_word(tweets, word):
@@ -123,7 +124,7 @@ class TrumpModel(markovify.Text):
         while True:
             sentence = self.make_sentence()
             if sentence:
-                if len(sentence) > 0 and len(sentence) < 140:
+                if len(sentence) > 0 and len(sentence) < 280:
                     if word in sentence:
                         return sentence
 
@@ -163,8 +164,6 @@ class TweetAnalyser():
                     self.pos_count += 1
                     self.pos_tweets.append(tweet)
                 self.score += sentiment_score
-                print('Tweet: {}'.format(cleaned_tweet))
-                print('Score: {}\n'.format(sentiment_score))
         final_score = round((self.score / float(len(tweets))), 2)
         return final_score
 
@@ -202,8 +201,8 @@ def run_analysis():
 
 run_analysis()
 # display_cloud()
-word = "obama"
-count = words[word]
+word = "Biden"
+count = words[word.lower()]
 print("Trump said {} {} times".format(word, count))
 # make_tweets(tweets)
 make_tweets_from_word(tweets, word)
