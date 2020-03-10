@@ -164,7 +164,9 @@ class TweetAnalyser():
                     self.pos_count += 1
                     self.pos_tweets.append(tweet)
                 self.score += sentiment_score
-        final_score = round((self.score / float(len(tweets))), 2)
+                print('Tweet: {}'.format(cleaned_tweet))
+                print('Score: {}\n'.format(sentiment_score))
+                final_score = round((self.score / float(len(tweets))), 2)
         return final_score
 
     def sentiment_split(self):
