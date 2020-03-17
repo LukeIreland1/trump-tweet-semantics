@@ -115,18 +115,15 @@ For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^1
 
 # 3. Data Pre-processing
 
-TODO:
+I used Python's JSON library to load the .json file into the program as a dict. The dict contained lots of useful information, but I was actually only interested in the tweets themselves, so I extracted them, cleaned them up by removing anything that wasn't a word (URLs mostly, numbers, symbols), tokenising the remaining words, then feeding the tokens into my classifer. My classifier first applies lemmatisation, which is an advanced form of stemming. It looks at the context of each word in the given text, unlike stemming, then reduces all forms/inflections of a word into its base form. This base form is compatible with WordNet which is a lexical database created by Princeton University that groups words into cognitive synonyms or synsets.
 
-1. Explain pandas
-2. Explain dataframe
-3. Stemming/Lemmatization
-4. Sentiwordnet
-5. Wordnet
-6. Tokenization
+All tagged words have their synsets retrieved, which is then used by SentiWordNet to retrieve a sentiment score. SentiWordNet is a lexical resource used for opinion mining created by the Institute of the National Research Council of Italy.
 
-I used Python's JSON library to load the .json file into the program as a dict. The dict contained lots of useful information, but I was actually only interested in the tweets themselves, so I extracted them, cleaned them up by removing anything that wasn't a word (URLs mostly, numbers, symbols) and fed them into my classifer, which used sentiment scores for each individual word in a tweet to build up a score for the tweet, and used negation when words were used next to modfiers like not and no.
+These sentiment scores for each individual word in a tweet, are used to build an aggregate score for the tweet, and negation is used when words were used next to modfiers like "not" and "no".
 
 These scores, and resulting polarity (negative, neutral, positive), were then fed into a pandas DataFrame, then provided to the Scikit Learn pipelines.
+
+pandas is a Python library for data analysis and manipulation, and provides a DataFrame class, which is very useful for organising data, and is compatible with most NLP libraries in Python.
 
 # 4. Sentiment Classification
 
