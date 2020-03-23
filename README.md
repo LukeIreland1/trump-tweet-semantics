@@ -41,3 +41,7 @@ What versioning statergy are you using for your project, something like [semanti
 * [Gitlab Markdown Guide](https://docs.gitlab.com/ee/user/markdown.html)
 * [Example 1](https://github.com/erasmus-without-paper/ewp-specs-sec-intro/tree/v2.0.2)
 * [Example 2](https://github.com/erasmus-without-paper/ewp-specs-architecture/tree/v1.10.0)
+
+## Documentation
+View the docs/report.md online, or download it and build a pdf with:
+`pandoc ...`
