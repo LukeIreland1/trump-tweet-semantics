@@ -1,7 +1,6 @@
 <md-cover title='Trump Tweet Sentiment Analysis' author='Luke Ireland'></md-cover>
 <md-style name="latex"></md-style>
 
-
 # Table of Contents <!-- omit in toc -->
 
 - [1. Introduction](#1-introduction)
@@ -68,11 +67,6 @@ I will also be evaluating the performance of sentiment analysis algorithms on th
 
 # 2. Literature Review
 
-TODO:
-
-1. Add stochastic gradient descent info
-2. Make equations explicit
-
 I decided to use Python as it's my strongest language, plus it's flexibility across platforms and level of API support makes it an obvious choice.
 
 I originally planned to use Twitter's API via [Twitter Search](https://github.com/ckoepp/TwitterSearch)[^1], but I couldn't use it due to being unable to apply for a Twitter Developer Account.
@@ -101,13 +95,19 @@ I will specifically be using multinomial logistic regression, as I have 3 classe
 
 Softmax is simply: e<sup>scores</sup>/sum(scores), where scores a vector where each element corresponds to a word and sentiment prediction.
 
+Stochastic Gradient Descent is an iterative method for optimizing an objective function with suitable smoothness properties. The objective function to be minimised is: ![Figure 1](../images/sgd.svg "Figure 1")
+
+_Figure 1_
+
+where the parameter w is to be estimated. Each summand function Q<sub>i</sub> is typically associated with the i-th observation in the data set.[^16]
+
 Due to their simple effectiveness, I assume Naive Bayes, Random Forest, and Logistic Regression will perform the best to begin with, certainly in terms of speed, but with tweaking, Multilayer Perceptron and XGB should provide comparable or better accuracy.
 
 After coming across this article on [algorithm comparison](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^16], I found that creating a tf-idf transformer to use on the initial bag of words model massively boosts accuracy.
 
 When implementing my models, I discovered that the fairest, most reproducible method of comparison was using Scikit Learn's [Pipelines](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^16], and began altering my code to minimise the difference between how classifiers are ran, to isolate the performance of the classifier down to the algorithm itself and not any pre-processing. I had to cut Latent Sentiment Analysis as it didn't fit this streamlined format, due to the way it retrospectively trains itself. Scikit Learn is another Python NLP library that builds on the NLP available in NLTK.
 
-I decided to standardise my scores using the z-score method of `score = (raw_score - mean)/standard deviation`.
+I decided to standardise my scores using the z-score method of `new score = (raw_score - mean)/standard deviation`, where raw score is the original score calculated by my classifier. All scores are calculated by my classifier, then a mean and standard deviation are collected to calculate the z-score for each tweet.
 
 I also wanted to use k-fold cross validation on the data, which involves splitting the data into k equal sized partitions, where one of the partitions is used as validation data for testing the model. This split repeats k times, in a way in which every partition is used as the validation at least one, then averaged to produce a single estimation[^17].
 
@@ -115,17 +115,25 @@ For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^1
 
 # 3. Data Pre-processing
 
-I used Python's JSON library to load the .json file into the program as a dict. The dict contained lots of useful information, but I was actually only interested in the tweets themselves, so I extracted them, cleaned them up by removing anything that wasn't a word (URLs mostly, numbers, symbols), tokenising the remaining words, then feeding the tokens into my classifer. My classifier first applies lemmatisation, which is an advanced form of stemming. It looks at the context of each word in the given text, unlike stemming, then reduces all forms/inflections of a word into its base form. This base form is compatible with WordNet which is a lexical database created by Princeton University that groups words into cognitive synonyms or synsets.
+I used Python's JSON library to load the tweets.json file into the program as a dictionary, implemented in Python as a dict. The dict contained lots of useful information, but I was actually only interested in the tweets themselves, so I extracted them, cleaned them up by removing anything that wasn't a word (URLs mostly, numbers, symbols), tokenising the remaining words, then feeding the tokens into my classifer.
 
-All tagged words have their synsets retrieved, which is then used by SentiWordNet to retrieve a sentiment score. SentiWordNet is a lexical resource used for opinion mining created by the Institute of the National Research Council of Italy.
+My classifier first applies lemmatisation, which is an advanced form of stemming. It looks at the context of each word in the given text, unlike stemming, then reduces all forms/inflections of a word into its base form. This base form is then compatible with WordNet which is a lexical database created by psychology professor George Armitage Miller of Princeton University, that groups words into cognitive synonyms or synsets.[^20]
 
-These sentiment scores for each individual word in a tweet, are used to build an aggregate score for the tweet, and negation is used when words were used next to modfiers like "not" and "no".
+Synsets are grouped data elements considered semantically equivalent for information retrieval purposes.[^21]
 
-These scores, and resulting polarity (negative, neutral, positive), were then fed into a pandas DataFrame, then provided to the Scikit Learn pipelines.
+These base forms can be further processed, by tagging them with the appropriate usage, meaning the most accurate synset can be retrieved. This synset is then used by SentiWordNet to retrieve a sentiment score. SentiWordNet is a lexical resource used for opinion mining created by Andrea Esuli of the Institute of the National Research Council of Italy.[^22]
+
+These sentiment scores for each individual word in a tweet, are used to build an aggregate score for the tweet, and negation is used when words were used next to modfiers like "not" and "no". There are more possible modifers, such as "very", "hardly", "extremely", "barely" or "never" - "It's never a good idea to...", but these are more complex modfiers than the ones I implemented and were fairly out of scope, given my project is more to do with comparing existing algorithms, than making a perfect one myself.
+
+These scores, and resulting polarity (negative, neutral, positive), were then fed into a pandas DataFrame, then provided to the Scikit Learn pipelines, containing implementations.
 
 pandas is a Python library for data analysis and manipulation, and provides a DataFrame class, which is very useful for organising data, and is compatible with most NLP libraries in Python.
 
 # 4. Sentiment Classification
+
+TODO:
+
+1. Talk about trial and error method to decide on threshold values.
 
 I decided to choose rather narrow ranges for each sentiment class.
 
@@ -139,6 +147,7 @@ TODO:
 
 1. Talk about algorithms used
 2. Talk about pipelines
+3. Multithreading
 
 # 6. Frequency Distribution
 
@@ -147,7 +156,7 @@ I used NLTK to look at the most common words and phrases of different lengths.
 # 6. Word Cloud
 
 Here is a word cloud I created using the Python library wordcloud.
-![Figure 1](../images/wordcloud4.png "Figure 1")_Figure 1_ - WordCloud of phrases of length 4.
+![Figure 2](../images/wordcloud4.png "Figure 2")_Figure 2_ - WordCloud of phrases of length 4.
 
 # 7. Tweet Generator
 
@@ -180,5 +189,10 @@ TODO:
 [^13]: https://en.wikipedia.org/wiki/XGBoost
 [^14]: https://en.wikipedia.org/wiki/Multilayer_perceptron
 [^15]: https://en.wikipedia.org/wiki/Logistic_regression
-[^16]: https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8
-[^17]: https://en.wikipedia.org/wiki/Cross-validation_(statistics)#k-fold_cross-validation
+[^16]: https://en.wikipedia.org/wiki/Stochastic_gradient_descent
+[^17]: https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8
+[^18]: https://en.wikipedia.org/wiki/Cross-validation_(statistics)#k-fold_cross-validation
+[^19]: https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2
+[^20]: https://en.wikipedia.org/wiki/WordNet
+[^21]: https://en.wikipedia.org/wiki/Synonym_ring
+[^22]: https://github.com/aesuli/SentiWordNet/blob/master/papers/LREC06.pdf
