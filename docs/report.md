@@ -15,6 +15,10 @@
 - [6. Word Cloud](#6-word-cloud)
 - [7. Tweet Generator](#7-tweet-generator)
 - [8. Evaluation](#8-evaluation)
+  - [Results](#results)
+    - [By Accuracy](#by-accuracy)
+    - [By Time](#by-time)
+  - [Findings](#findings)
 - [9. Conclusion](#9-conclusion)
 - [10. References](#10-references)
 
@@ -164,11 +168,37 @@ I created my own class using Markovify[^8], that would force the generator to ge
 
 # 8. Evaluation
 
-Results and findings:
+## Results
 
-TODO:
+### By Accuracy
 
-1. Add results
+| Name                        | Accuracy | Time (s)   |
+| --------------------------- | -------- | ---------- |
+| Logistic Regression         | 0.800922 | 37.240018  |
+| Random Forest               | 0.759241 | 842.787394 |
+| Multilayer Perceptron       | 0.757835 | 804.682227 |
+| XGBoost                     | 0.715872 | 405.671944 |
+| Naive Bayes                 | 0.713579 | 32.224075  |
+| Stochastic Gradient Descent | 0.674234 | 32.702595  |
+
+Logistic Regression was the most accurate algorithm by a fair margin, and was significantly faster than the closest competition.
+
+### By Time
+
+| Name                        | Accuracy | Time (s)   |
+| --------------------------- | -------- | ---------- |
+| Naive Bayes                 | 0.713579 | 32.224075  |
+| Stochastic Gradient Descent | 0.674234 | 32.702595  |
+| Logistic Regression         | 0.800922 | 37.240018  |
+| XGBoost                     | 0.715872 | 405.671944 |
+| Multilayer Perceptron       | 0.757835 | 804.682227 |
+| Random Forest               | 0.759241 | 842.787394 |
+
+Naive Bayes was the fastest, but was very closely followed by the less accurate SGD, and the more accurate Logistic Regression.
+
+## Findings
+
+Generally, the fastest algorithms were the least accurate, and vice versa. Logistic Regression appears to be the exception as it was the 3rd fastest and the most accurate.
 
 # 9. Conclusion
 

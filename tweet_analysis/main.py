@@ -2,6 +2,7 @@ import concurrent.futures
 from timeit import default_timer as timer
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import cross_val_score
 
@@ -72,9 +73,16 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
 
 algorithms.sort(key=lambda x: x.accuracy, reverse=True)
 
+data = {
+    "Name": [algorithm.name for algorithm in algorithms],
+    "Accuracy": [algorithm.accuracy for algorithm in algorithms],
+    "Time (s)": [algorithm.time for algorithm in algorithms]
+}
+
+df = pd.DataFrame(data)
+print(df)
+
 for algorithm in algorithms:
-    print("Name:\t{}\tAccuracy:\t{}\tTime:\t{}".format(
-        algorithm.name, algorithm.accuracy, algorithm.time))
     plt.plot(algorithm.accuracy, algorithm.time,
                 "{}o".format(get_colour_code()), label=algorithm.name)
     plt.xlabel("Accuracy")
@@ -82,3 +90,4 @@ for algorithm in algorithms:
     plt.legend(loc="upper right")
 
 plt.savefig("output.svg")
+
