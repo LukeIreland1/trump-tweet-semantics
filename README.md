@@ -44,4 +44,7 @@ What versioning statergy are you using for your project, something like [semanti
 
 ## Documentation
 View the docs/report.md online, or download it and build a pdf with:
-`pandoc ...`
+
+```zsh
+pandoc -s --metadata title="Trump Tweet Semantics Report" --metadata author="Luke Ireland" docs/report.md --pdf-engine=xelatex -o report.pdf
+```
