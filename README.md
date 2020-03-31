@@ -46,5 +46,5 @@ What versioning statergy are you using for your project, something like [semanti
 View the docs/report.md online, or download it and build a pdf with:
 
 ```zsh
-pandoc -s --metadata title="Trump Tweet Semantics Report" --metadata author="Luke Ireland" docs/report.md --pdf-engine=xelatex -o report.pdf
+pandoc -s --metadata title="Trump Tweet Semantics Report" --metadata author="Luke Ireland" report.md --pdf-engine=xelatex -V 'mainfont:DejaVuSerif' -V 'sansfont:DejaVuSans' -V 'monofont:DejaVuSansMono' -V 'mathfont:TeXGyreDejaVuMath-Regular' -o report.pdf
 ```

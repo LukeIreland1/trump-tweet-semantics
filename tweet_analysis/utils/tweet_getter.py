@@ -13,6 +13,7 @@ from .lukifier import Lukifier
 class TweetGetter:
     def __init__(self):
         self.tweets = []
+        self.cleaned_tweets = []
         self.tweets_with_scores = []
         self.tweet_file = root / "resources" / "tweets.json"
 
@@ -24,7 +25,8 @@ class TweetGetter:
         for tweet in tweets:
             if tweet:
                 new_tweets.append(tweet["text"])
-        print("Got tweets")
+        print("Got {} tweets".format(len(new_tweets)))
+        self.tweets = new_tweets
         return new_tweets
 
     def clean_tweet(self, tweet):
@@ -44,29 +46,31 @@ class TweetGetter:
         return cleaned_tweets
 
     def get_clean_tweets(self):
-        if not self.tweets:
+        if not self.cleaned_tweets:
             print("Getting clean tweets")
-            self.tweets = self.clean_tweets(self.get_tweets(self.tweet_file))
-        print("Got clean tweets")
-        return self.tweets
+            if not self.tweets:
+                self.get_tweets(self.tweet_file)
+            self.cleaned_tweets = self.clean_tweets(self.tweets)
+        print("Got {} clean tweets".format(len(self.cleaned_tweets)))
+        return self.cleaned_tweets
 
     def get_clean_tweets_with_scores(self):
         if not self.tweets_with_scores:
             print("Getting scores")
-            if not self.tweets:
-                tweets = self.get_clean_tweets()
+            if not self.cleaned_tweets:
+                self.cleaned_tweets = self.get_clean_tweets()
             data = {
                 'tweet': [],
                 'score': [],
                 'polarity': []
             }
-            for tweet in tweets:
+            for tweet in self.cleaned_tweets:
                 classifier = Lukifier(tweet)
                 data['tweet'].append(tweet)
                 data['score'].append(classifier.score)
                 data['polarity'].append(classifier.polarity)
             self.tweets_with_scores = pd.DataFrame(data)
-        print("Got scores")
+        print("Got {} scores".format(len(self.cleaned_tweets)))
         return self.tweets_with_scores
 
     def standardise(self, x, std, mean):

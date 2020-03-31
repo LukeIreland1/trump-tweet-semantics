@@ -64,12 +64,14 @@ y = tweets.polarity
 algorithms = [XGBoost(), LogisticRegression(), RandomForest(),
               MultilayerPerceptron(), NaiveBayes(), StochasticGD()]
 
+start = timer()
 with concurrent.futures.ThreadPoolExecutor() as executor:
     futures = {executor.submit(evaluate, algorithm): algorithm
                for algorithm in algorithms}
     for future in concurrent.futures.as_completed(futures):
         algorithm = futures[future]
         print("Training {}".format(algorithm.name))
+print("Total training time: {}s".format(timer() - start))
 
 algorithms.sort(key=lambda x: x.accuracy, reverse=True)
 
