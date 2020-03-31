@@ -114,7 +114,7 @@ For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^1
 
 ## 3.1 Dataset
 
-The dataset was last updated 5th March and contains 46208 tweets.
+The dataset was last updated 5th March 2020 and contains 46208 tweets.
 
 I used NLTK to look at the most common words and phrases of different lengths, to explore the dataset.
 
