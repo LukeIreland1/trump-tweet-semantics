@@ -169,7 +169,7 @@ I wanted to use k-fold cross validation on the data, which involves splitting th
 
 K-fold cross validation is built into `cross_val_score`, which is given a value of 10 for the k-value parameter.
 
-Each algorithm had to be trained through all 46208 tweets, so I implemented multithreading to better use of system resources when running the program. I used Python's multithreading library `concurrent` which contains a module `futures` with the function `ThreadPoolExecutor`, which is used to create multiple `future` objects to be processed on their own separate thread. Adding this made the program around 2.5x faster, and finished in 14 minutes instead of 36.
+Each algorithm had to be trained through all 46208 tweets, so I implemented multithreading to better use of system resources when running the program. I used Python's multithreading library `concurrent`, which contains a module `futures`, with the function `ThreadPoolExecutor`, which is used to create multiple `future` objects able to be processed on their own separate thread. Adding this made the program around 2.5x faster, and finished in 14 minutes instead of 36.
 
 # 5. Evaluation
 
