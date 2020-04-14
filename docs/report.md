@@ -1,6 +1,10 @@
 <md-cover title='Trump Tweet Sentiment Analysis' author='Luke Ireland'></md-cover>
 <md-style name="latex"></md-style>
 
+TODO:
+
+- New page for new chapter
+
 # Table of Contents <!-- omit in toc -->
 
 - [1. Introduction](#1-introduction)
@@ -114,7 +118,12 @@ For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^1
 
 ## 3.1 Dataset
 
-The dataset was last updated 5th March 2020 and contains 46208 tweets.
+TODO:
+
+- Add dataset time range
+- Remove retweets from tweets
+
+The dataset I extracted from Trump Twitter Archive, was last updated 5th March 2020 and contains 46208 tweets.
 
 I used NLTK to look at the most common words and phrases of different lengths, to explore the dataset.
 
@@ -134,6 +143,13 @@ China wants Sleepy Joe Biden, on the other hand, take out millions of Americanâ€
 ```
 
 ## 3.2 Labelling
+
+TODO:
+
+- Define stemming
+- Talk about why I made my own classifier instead of manual labelling.
+- Talk about how I evaluated my classifer's labelling accuracy
+- Talk about how it doesn't matter if the labels aren't correct, as long as they are consistent, because it's all about how a classifier links a given label to the appropriate data
 
 I used Python's JSON library to load the tweets.json file into the program as a dictionary, implemented in Python as a dict. The dict contained lots of useful information, but I was actually only interested in the tweets themselves, so I extracted them, cleaned them up by removing anything that wasn't a word (URLs mostly, numbers, symbols). These cleaned tweets then needed to be labelled, so I created my own classifier which required further processing.
 
@@ -157,9 +173,14 @@ The tweets and polarities were then fed into a pandas DataFrame, then provided t
 
 pandas is a Python library for data analysis and manipulation, and provides a DataFrame class, which is very useful for organising data, and is compatible with most NLP libraries in Python.
 
-I decided to standardise my scores using the z-score method of `new score = (raw_score - mean)/standard deviation`, where raw score is the original score calculated by my classifier. All scores are calculated by my classifier, then a mean and standard deviation are collected to calculate the z-score for each tweet.
+I decided to standardise my scores using the z-score method of `new score = (raw_score - mean)/standard deviation`, where raw score is the original score for a given tweet calculated by my classifier. All scores are calculated by my classifier, then a mean and standard deviation for all tweets are collected to calculate the z-score for each tweet.
 
 # 4. Comparison Implementation
+
+TODO:
+
+- Talk about configuring XGBoost parameters
+- Talk about exact steps program follows
 
 I originally intended to implement the algorithms themselves, but came across Scikit-Learn's pipelines, which gave very easily reproducible and fair ways of running classification algorithms, which was immensely useful to me trying to compare these algorithms. I could have used these pipelines with my own implementations, but that would then require the further diversion of learning how to make it compatible. I instead opted to go along with their implementation which slot into their pipelines very nicely. Pipelines contain function calls as steps, which are used on the input data, through the pipeline training function provided by Scikit-Learn: `cross_val_score`
 
@@ -200,6 +221,12 @@ Logistic Regression was the most accurate algorithm by a fair margin, and was si
 | Random Forest               | 0.759241 | 842.787394 |
 
 Naive Bayes was the fastest, but was very closely followed by the less accurate SGD, and the more accurate Logistic Regression.
+
+###Â Graph (Accuracy against Time)
+
+TODO:
+
+- Add graph
 
 ## Findings
 
