@@ -184,13 +184,17 @@ TODO:
 
 I originally intended to implement the algorithms themselves, but came across Scikit-Learn's pipelines, which gave very easily reproducible and fair ways of running classification algorithms, which was immensely useful to me trying to compare these algorithms. I could have used these pipelines with my own implementations, but that would then require the further diversion of learning how to make it compatible. I instead opted to go along with their implementation which slot into their pipelines very nicely. Pipelines contain function calls as steps, which are used on the input data, through the pipeline training function provided by Scikit-Learn: `cross_val_score`
 
-As a result, I only chose algorithms that were implemented by Scikit-Learn, meaning I had to drop some algorithms I was considering for comparison during my research stage.
+As a result, I only chose algorithms that were implemented by or compatible with Scikit-Learn, meaning I had to drop some algorithms I was considering for comparison during my research stage. Each algorithm was implemented as a class, with appropriate evaluation functions, and allowed for configuration through parameters. XGBoost offered the largest amount of customisation, but there were only a few options for multi-class classification, so I went with softmax for its objective parameter.
 
 I wanted to use k-fold cross validation on the data, which involves splitting the data into k equal sized partitions, where one of the partitions is used as validation data for testing the model. This split repeats k times, in a way in which every partition is used as the validation at least one, then averaged to produce a single estimation[^17].
 
 K-fold cross validation is built into `cross_val_score`, which is given a value of 10 for the k-value parameter.
 
+The data is pre-processed and formatted, as described in chapter 3, and a pipeline is created for each algorithm inside a wrapper class. The wrappper class initially contains a name and pipeline, but will later contain accuracy and time information. All classes are initialised inside a list, then each class has its pipeline passed to the evaluation function (`cross_val_score`), as well as the tweets, and labels from the data. This evaluation is timed, and the function itself returns an accuracy score. This time and accuracy are added to the wrapper class.
+
 Each algorithm had to be trained through all 46208 tweets, so I implemented multithreading to better use of system resources when running the program. I used Python's multithreading library `concurrent`, which contains a module `futures`, with the function `ThreadPoolExecutor`, which is used to create multiple `future` objects able to be processed on their own separate thread. Adding this made the program around 2.5x faster, and finished in 14 minutes instead of 36.
+
+A graph is created to compare accuracy against time using `matplotlib.pyplot`.
 
 # 5. Evaluation
 
@@ -224,9 +228,8 @@ Naive Bayes was the fastest, but was very closely followed by the less accurate 
 
 ### Graph (Accuracy against Time)
 
-TODO:
-
-- Add graph
+![Figure 3](images/output.svg "Figure 3")
+_Figure 3_
 
 ## Findings
 
