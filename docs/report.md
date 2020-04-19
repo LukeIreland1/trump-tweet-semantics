@@ -15,14 +15,14 @@ TODO:
 - [3. Data Pre-processing](#3-data-pre-processing)
   - [3.1 Dataset](#31-dataset)
   - [3.2 Labelling](#32-labelling)
-- [4. Comparison Implementation](#4-comparison-implementation)
+- [4. How I compared each algorithm to one](#4-how-i-compared-each-algorithm-to-one)
 - [5. Evaluation](#5-evaluation)
   - [Results](#results)
     - [By Accuracy](#by-accuracy)
     - [By Time](#by-time)
   - [Findings](#findings)
-- [9. Conclusion](#9-conclusion)
-- [10. References](#10-references)
+- [6. Conclusion](#6-conclusion)
+- [7. References](#7-references)
 
 # 1. Introduction
 
@@ -30,7 +30,7 @@ This project focuses on comparison of Sentiment Analysis algorithms and various 
 
 Sentiment Analysis is classifying text into various classifications. In this case, it is into 3 classes: negative, neutral and positive. Natural Language Processing is the subfield of linguistics and computer science that looks at how computers process and analyze speech and text. Sentiment Analysis is a form of NLP.
 
-Analysis methods include:
+Example analysis methods include:
 
 - Frequency Distribution
 - Word Clouds
@@ -71,10 +71,10 @@ I will also be evaluating the performance of sentiment analysis algorithms on th
 
 # 2. Literature Review
 
-I decided to use Python as it's my strongest language, plus it's flexibility across platforms and level of API support makes it an obvious choice.
+I decided to use Python as it's my strongest language, plus its flexibility across platforms and level of API support makes it an obvious choice.
 
 I originally planned to use Twitter's API via [Twitter Search](https://github.com/ckoepp/TwitterSearch)[^1], but I couldn't use it due to being unable to apply for a Twitter Developer Account.
-I instead opted for someone else's collected tweets at [Trump Twitter Archive](http://www.trumptwitterarchive.com/archive)[^2]. The export format wasn't great, as you had to wait a while for the page to compile all the tweets into the correct format (When it would be useful to have it precompiled) and the page doesn't actually give you a JSON file, just a text output in JSON format, that you have to slowly copy and paste into a file and use programs to format the JSON into readable format.
+I instead opted for someone else's collected tweets at [Trump Twitter Archive](http://www.trumptwitterarchive.com/archive)[^2]. The export format wasn't great, as you had to wait a while for the page to compile all the tweets into the correct format (When it would be useful to have it precompiled) and the page doesn't actually give you a JSON file, just a text output in JSON format, that you have to slowly copy and paste into a file and use programs to format the JSON into readable format. This wasn't ideal, but was the best option available to me.
 
 I saw guides such as [Basic Binary Sentiment Analysis using NLTK](https://towardsdatascience.com/basic-binary-sentiment-analysis-using-nltk-c94ba17ae386)[^3], [Text Classification using NLTK](https://pythonprogramming.net/text-classification-nltk-tutorial/)[^4] and [Creating a Twitter Sentiment Analysis program using NLTK's Naive Bayes Classifier](https://towardsdatascience.com/creating-the-twitter-sentiment-analysis-program-in-python-with-naive-bayes-classification-672e5589a7ed)[^5] using NLTK's (Natural Language Toolkit - A Python library for NLP) Naive Bayes Classifier, but they used pre-processed data meaning I can't use them for my tweets, as that would mean using an classifier trained on film reviews, on tweets, specifically do. This [guide](https://www.freecodecamp.org/news/how-to-make-your-own-sentiment-analyzer-using-python-and-googles-natural-language-api-9e91e1c493e/)[^6] used Google's Natural Language API to perform Sentiment Analysis, but this method required constant communication with Google's Cloud server, so was fairly slow overall.
 
@@ -112,16 +112,13 @@ After coming across this article on [algorithm comparison](https://medium.com/to
 
 When implementing my models, I discovered that the fairest, most reproducible method of comparison was using Scikit Learn's [Pipelines](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^16], and began altering my code to minimise the difference between how classifiers are ran, to isolate the performance of the classifier down to the algorithm itself and not any pre-processing. I had to cut Latent Sentiment Analysis as it didn't fit this streamlined format, due to the way it retrospectively trains itself. Scikit Learn is another Python NLP library that builds on the NLP available in NLTK.
 
+The function that would be used to evaluate the pipelines: `cross_val_score`, gave a `scoring` parameter with many options[^18], I chose accuracy score, which simply compares prediction labels with actual labels, but there were a range of alternatives available, such as average precision, balanced accuracy score, Brier score, F1 score and Normalized Discounted Cumulative Gain.
+
 For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^18], which I found from [this](https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2)[^19] article attempting the same thing. The article listed multiple approaches, including using a Keras API and k-means clustering to build a Machine Learning model to feed into tweet generators, but that added a significant layer of obscurity, and made less coherent tweets.
 
 # 3. Data Pre-processing
 
 ## 3.1 Dataset
-
-TODO:
-
-- Add dataset time range
-- Remove retweets from tweets
 
 The dataset I extracted from Trump Twitter Archive, was last updated 5th March 2020 and contains 46208 tweets.
 
@@ -144,16 +141,9 @@ China wants Sleepy Joe Biden, on the other hand, take out millions of Americanâ€
 
 ## 3.2 Labelling
 
-TODO:
+I used Python's JSON library to load the tweets.json file into the program as a dictionary, implemented in Python as a dict. The dict contained lots of useful information, but I was actually only interested in the tweets themselves, so I extracted them, cleaned them up by removing anything that wasn't a word (URLs mostly, numbers, symbols). These cleaned tweets then needed to be labelled, so I created my own classifier which required further processing. I decided on making my own classifier due the size of the data.
 
-- Define stemming
-- Talk about why I made my own classifier instead of manual labelling.
-- Talk about how I evaluated my classifer's labelling accuracy
-- Talk about how it doesn't matter if the labels aren't correct, as long as they are consistent, because it's all about how a classifier links a given label to the appropriate data
-
-I used Python's JSON library to load the tweets.json file into the program as a dictionary, implemented in Python as a dict. The dict contained lots of useful information, but I was actually only interested in the tweets themselves, so I extracted them, cleaned them up by removing anything that wasn't a word (URLs mostly, numbers, symbols). These cleaned tweets then needed to be labelled, so I created my own classifier which required further processing.
-
-My classifier tokenised the cleaned tweets, then applied lemmatisation on the tokens, which is an advanced form of stemming. Tokenisation is another type of cleaning which throws away any useless (relative to NLP) information from a given input and lemmatisation looks at the context of each word in the given text, unlike stemming, then reduces all forms/inflections of a word into its base form. This base form is then compatible with WordNet which is a lexical database created by psychology professor George Armitage Miller of Princeton University, that groups words into cognitive synonyms or synsets.[^21]
+My classifier tokenised the cleaned tweets, then applied lemmatisation on the tokens, which is an advanced form of stemming. Stemming is the process of reducing inflections or derivations to their base form. Tokenisation is another type of cleaning which throws away any useless (relative to NLP) information from a given input and lemmatisation looks at the context of each word in the given text, unlike stemming, then reduces all forms/inflections of a word into its base form, based on that context. This base form is then compatible with WordNet which is a lexical database created by psychology professor George Armitage Miller of Princeton University, that groups words into cognitive synonyms or synsets.[^21]
 
 Synsets are grouped data elements considered semantically equivalent for information retrieval purposes.[^22]
 
@@ -161,7 +151,7 @@ These base forms can be further processed, by tagging them with the appropriate 
 
 These sentiment scores for each individual word in a tweet, are used to build an aggregate score for the tweet, and negation is used when words were used next to modfiers like "not" and "no". There are more possible modifers, such as "very", "hardly", "extremely", "barely" or "never" - "It's never a good idea to...", but these are more complex modfiers than the ones I implemented and were fairly out of scope, given my project is more to do with comparing existing algorithms, than making a perfect one myself.
 
-These scores are used to calculate a polarity (negative, neutral, positive) using a threshold I set through trial and error to see if the labels set on a large sample of tweets were reasonable and accurate enough.
+These scores are used to calculate a polarity (negative, neutral, positive) using a threshold I set through trial and error to see if the labels set on a large sample of tweets were reasonable and accurate enough. I couldn't possibly hope to verify my classifier is accurate for every single tweet, again, due to the size of the data. However, this doesn't matter, as the point of the project is to compare how other classifiers understand the link between a tweet and label, in order to create their own label. If the classifier is accurate, they should be able to label a tweet with the same sentiment as my classifier, regardless of the polarity.
 
 This resulted in rather narrow ranges for each sentiment class.
 
@@ -171,28 +161,25 @@ This resulted in rather narrow ranges for each sentiment class.
 
 The tweets and polarities were then fed into a pandas DataFrame, then provided to the Scikit Learn pipelines, containing implementations of the algorithms to be compared.
 
+I evaluated my classifier's labelling accuracy based on my own interpretation of a tweet's sentiment, and if my classifier was true to my interpretation for a reasonably large sample of tweets (around 100).
+
 pandas is a Python library for data analysis and manipulation, and provides a DataFrame class, which is very useful for organising data, and is compatible with most NLP libraries in Python.
 
 I decided to standardise my scores using the z-score method of `new score = (raw_score - mean)/standard deviation`, where raw score is the original score for a given tweet calculated by my classifier. All scores are calculated by my classifier, then a mean and standard deviation for all tweets are collected to calculate the z-score for each tweet.
 
-# 4. Comparison Implementation
+# 4. How I compared each algorithm to one
 
-TODO:
+I originally intended to implement the algorithms themselves, but came across Scikit-Learn's pipelines, which gave very easily reproducible and fair ways of running classification algorithms, which was immensely useful to me trying to compare these algorithms. I could have used these pipelines with my own implementations, but that would then require the further diversion of learning how to make it compatible, plus their implementations will have been well tested and scrutinised. I instead opted to go along with their implementation which slot into their pipelines very nicely. Pipelines contain function calls as steps, which are used on the input data, through the pipeline training function provided by Scikit-Learn: `cross_val_score`.
 
-- Talk about configuring XGBoost parameters
-- Talk about exact steps program follows
+As a result, I only chose algorithms that were implemented by or compatible with Scikit-Learn, meaning I had to drop some algorithms I was considering for comparison during my research stage. Each algorithm was implemented as a class, with appropriate evaluation functions, and allowed for configuration through parameters. XGBoost offered the largest amount of customisation, but there were only a few options for multi-class classification, so I went with softmax for its objective parameter, as it had the highest accuracy out of the few options available.
 
-I originally intended to implement the algorithms themselves, but came across Scikit-Learn's pipelines, which gave very easily reproducible and fair ways of running classification algorithms, which was immensely useful to me trying to compare these algorithms. I could have used these pipelines with my own implementations, but that would then require the further diversion of learning how to make it compatible. I instead opted to go along with their implementation which slot into their pipelines very nicely. Pipelines contain function calls as steps, which are used on the input data, through the pipeline training function provided by Scikit-Learn: `cross_val_score`
+I wanted to use k-fold cross validation on the data, which involves splitting the data into k equal sized partitions, where one of the partitions is used as validation data for testing the model, with the remaining k-1 partitions used for training the model. This split repeats k times, in a way in which every partition is used as the validation at least one, then averaged to produce a single estimation[^17].
 
-As a result, I only chose algorithms that were implemented by or compatible with Scikit-Learn, meaning I had to drop some algorithms I was considering for comparison during my research stage. Each algorithm was implemented as a class, with appropriate evaluation functions, and allowed for configuration through parameters. XGBoost offered the largest amount of customisation, but there were only a few options for multi-class classification, so I went with softmax for its objective parameter.
+K-fold cross validation is built into `cross_val_score`, which has k-value parameter, which I passed a value of 10 for.
 
-I wanted to use k-fold cross validation on the data, which involves splitting the data into k equal sized partitions, where one of the partitions is used as validation data for testing the model. This split repeats k times, in a way in which every partition is used as the validation at least one, then averaged to produce a single estimation[^17].
+The data is pre-processed and formatted, as described in Chapter 3, and a pipeline is created for each algorithm inside a wrapper class. The wrappper class initially contains a name and pipeline, but will later contain accuracy and time information. All classes are initialised inside a list, then each class has its pipeline passed to the evaluation function (`cross_val_score`), as well as the tweets, and labels from the data. This evaluation is timed, and the function itself returns an accuracy score for each of the k validations. This time and the mean of the accuracies are added to the wrapper class.
 
-K-fold cross validation is built into `cross_val_score`, which is given a value of 10 for the k-value parameter.
-
-The data is pre-processed and formatted, as described in chapter 3, and a pipeline is created for each algorithm inside a wrapper class. The wrappper class initially contains a name and pipeline, but will later contain accuracy and time information. All classes are initialised inside a list, then each class has its pipeline passed to the evaluation function (`cross_val_score`), as well as the tweets, and labels from the data. This evaluation is timed, and the function itself returns an accuracy score. This time and accuracy are added to the wrapper class.
-
-Each algorithm had to be trained through all 46208 tweets, so I implemented multithreading to better use of system resources when running the program. I used Python's multithreading library `concurrent`, which contains a module `futures`, with the function `ThreadPoolExecutor`, which is used to create multiple `future` objects able to be processed on their own separate thread. Adding this made the program around 2.5x faster, and finished in 14 minutes instead of 36.
+Each algorithm had to be trained through all 46208 tweets, 10 times through k-fold cross validation, so I implemented multithreading to better use of system resources when running the program. I used Python's multithreading library `concurrent`, which contains a module `futures`, with the function `ThreadPoolExecutor`, which is used to create multiple `future` objects able to be processed on their own separate thread. Adding this made the program around 2.5x faster, and finished in 14 minutes instead of 36.
 
 A graph is created to compare accuracy against time using `matplotlib.pyplot`.
 
@@ -235,9 +222,13 @@ _Figure 3_
 
 Generally, the fastest algorithms were the least accurate, and vice versa. Logistic Regression appears to be the exception as it was the 3rd fastest and the most accurate.
 
-# 9. Conclusion
+The descrepancy in time between certain algorithm evaluations was odd, so I decided to experiment further by seeing what happens when I train with varying data sizes.
 
-# 10. References
+# 6. Conclusion
+
+If I had more time, I would have tweaked all algorithms, using all available parameters to provide the highest accuracy.
+
+# 7. References
 
 [^1]: https://github.com/ckoepp/TwitterSearch
 [^2]: http://www.trumptwitterarchive.com/archive
@@ -256,6 +247,7 @@ Generally, the fastest algorithms were the least accurate, and vice versa. Logis
 [^15]: https://en.wikipedia.org/wiki/Logistic_regression
 [^16]: https://en.wikipedia.org/wiki/Stochastic_gradient_descent
 [^17]: https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8
+[^18]: https://scikit-learn.org/stable/modules/classes.html#module-sklearn.metrics
 [^18]: https://en.wikipedia.org/wiki/Cross-validation_(statistics)#k-fold_cross-validation
 [^19]: https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2
 [^20]: https://en.wikipedia.org/wiki/WordNet

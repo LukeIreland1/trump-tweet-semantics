@@ -1,23 +1,30 @@
+import asyncio
+import multiprocessing
 from pathlib import Path
 from nltk import download
 from nltk.corpus import words
+import time
 
 download('words')
 
 report = Path.cwd().joinpath("docs","report.md")
 
-lines = []
+tokens = []
 with report.open() as read_file:
-    lines = read_file.readlines()
+    tokens = read_file.read().split()
 
 my_words = []
-word_count = 0
-line_count = 0
-for line in lines:
-    print("Lines Processed: {}".format(line_count))
-    for word in line.split():
-        if word in words.words():
-            my_words.append(word)
-    line_count +=  1
 
-print(my_words, len(my_words))
+async def main():
+    async def process_token(token):
+        if token in words.words():
+            my_words.append(token)
+
+    coros = [process_token(token) for token in tokens]
+    await asyncio.gather(*coros)
+
+print("Unprocessed tokens:\t{}".format(len(tokens)))
+start = time.time()
+asyncio.run(main())
+print("Time 1: {}s".format(time.time()-start))
+print("Valid words:\t{}".format(len(my_words)))
