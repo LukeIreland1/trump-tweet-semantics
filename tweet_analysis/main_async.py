@@ -1,4 +1,4 @@
-import concurrent.futures
+import multiprocessing
 from pathlib import Path
 from random import randint
 from timeit import default_timer as timer
@@ -14,15 +14,7 @@ from algorithms.stochastic_gradient_descent import StochasticGD
 from algorithms.xg_boost import XGBoost
 from sklearn.model_selection import cross_val_score
 from utils.tweet_getter import TweetGetter
-
-RESTART = False
-SAVE_PATH = Path("graphs")
-if SAVE_PATH.exists():
-    if RESTART:
-        shutil.rmtree(SAVE_PATH)
-else:
-    SAVE_PATH.mkdir()
-
+from itertools import product
 
 COLOURS = {
     'b': False,
@@ -53,33 +45,29 @@ def get_range(size, orig_size):
     return start, end
 
 
-def progressive_train(X, y):
+def progressive_train(X, y, save_path):
     orig_size = len(X)
     sizes = [i*0.125 for i in range(1, 9)]
-    lengths = [int(size*orig_size) for size in sizes]
-    print("Training on tweets of sizes: {}".format(lengths))
     for size in sizes:
         start, end = get_range(size, orig_size)
-        train(X[start:end], y[start:end])
+        print("Training on {} tweets".format(end-start))
+        train(X[start:end], y[start:end], save_path)
 
 
-def train(X, y):
-    save_file = SAVE_PATH.joinpath("size{}.svg".format(len(X)))
-    print("Searching for results at {}".format(save_file))
+def train(X, y, save_path):
+    save_file = save_path.joinpath("size{}.svg".format(len(X)))
     if save_file.exists():
         return
-    print("Training on {} tweets".format(len(X)))
 
     algorithms = [XGBoost(), LogisticRegression(), RandomForest(),
                   MultilayerPerceptron(), NaiveBayes(), StochasticGD()]
 
+    results = []
+
     start = timer()
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = {executor.submit(evaluate, algorithm): algorithm
-                   for algorithm in algorithms}
-        for future in concurrent.futures.as_completed(futures):
-            algorithm = futures[future]
-            print("Training {}".format(algorithm.name))
+    args = [(algorithm, X, y) for algorithm in algorithms]
+    with multiprocessing.Pool() as pool:
+        algorithms = pool.starmap(evaluate, args)
     print("Total training time: {}s".format(timer() - start))
 
     algorithms.sort(key=lambda x: x.accuracy, reverse=True)
@@ -128,16 +116,26 @@ def run_algorithm(function):
     return accuracy, time
 
 
-def evaluate(algorithm):
+def evaluate(algorithm, X, y):
     function = wrapper(
         cross_val_score, algorithm.pipeline, X, y, cv=10, scoring='accuracy')
     accuracy, time = run_algorithm(function)
     algorithm.accuracy = accuracy
     algorithm.time = time
+    return algorithm
 
 
-tweets = TweetGetter().get_standardised_tweets()
-X = tweets.tweet
-y = tweets.polarity
+if __name__ == "__main__":
+    restart = False
+    save_path = Path("graphs")
+    if save_path.exists():
+        if restart:
+            shutil.rmtree(save_path)
+    else:
+        save_path.mkdir()
 
-progressive_train(X, y)
+    tweets = TweetGetter().get_standardised_tweets()
+    X = tweets.tweet
+    y = tweets.polarity
+
+    progressive_train(X, y, save_path)

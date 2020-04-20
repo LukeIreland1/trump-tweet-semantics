@@ -1,4 +1,3 @@
-import asyncio
 import multiprocessing
 from pathlib import Path
 from nltk import download
