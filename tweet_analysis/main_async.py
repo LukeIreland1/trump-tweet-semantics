@@ -16,6 +16,8 @@ from sklearn.model_selection import cross_val_score
 from utils.tweet_getter import TweetGetter
 from itertools import product
 
+np.set_printoptions(precision=2)
+
 COLOURS = {
     'b': False,
     'g': False,
@@ -50,42 +52,47 @@ def progressive_train(X, y, save_path):
     sizes = [i*0.125 for i in range(1, 9)]
     for size in sizes:
         start, end = get_range(size, orig_size)
-        print("Training on {} tweets".format(end-start))
         train(X[start:end], y[start:end], save_path)
 
 
 def train(X, y, save_path):
     save_file = save_path.joinpath("size{}.svg".format(len(X)))
+    print("Searching for results at {}".format(save_file))
     if save_file.exists():
         return
+    print("Training on {} tweets".format(len(X)))
 
     algorithms = [XGBoost(), LogisticRegression(), RandomForest(),
                   MultilayerPerceptron(), NaiveBayes(), StochasticGD()]
-
-    results = []
 
     start = timer()
     args = [(algorithm, X, y) for algorithm in algorithms]
     with multiprocessing.Pool() as pool:
         algorithms = pool.starmap(evaluate, args)
-    print("Total training time: {}s".format(timer() - start))
+    print("Total training time for size {}: {}s".format(len(X), timer() - start))
 
     algorithms.sort(key=lambda x: x.accuracy, reverse=True)
 
     accuracies = [algorithm.accuracy for algorithm in algorithms]
+    mean_acc = np.mean(accuracies)
+    std_acc = np.std(accuracies)
+
     times = [algorithm.time for algorithm in algorithms]
+    mean_time = np.mean(times)
+    std_time = np.std(times)
+
     data = {
         "Name": [algorithm.name for algorithm in algorithms],
         "Accuracy": accuracies,
-        "Time (s)": [algorithm.time for algorithm in algorithms]
+        "Accuracy (Mean)": mean_acc,
+        "Accuracy (std)": std_acc,
+        "Time (s)": times,
+        "Time (s) (mean)": mean_time,
+        "Time (s) (std)": std_time
     }
 
     df = pd.DataFrame(data)
     print(df)
-    print("Accuracy (mean):\t{}\nAccuracy (std):\t{}".format(
-        np.mean(accuracies), np.std(accuracies)))
-    print("Time (mean):\t{}\nTime (std):\t{}".format(
-        np.mean(times), np.std(times)))
 
     for algorithm in algorithms:
         plt.plot(algorithm.accuracy, algorithm.time,
@@ -94,8 +101,8 @@ def train(X, y, save_path):
         plt.ylabel("Time (s)")
         plt.legend()
 
-    plt.savefig(save_file)
-    print("Saved results to {}".format(save_file))
+    print("Saved results to {}".format(str(save_file)))
+    plt.savefig(str(save_file))
     plt.clf()
 
 
@@ -130,7 +137,10 @@ if __name__ == "__main__":
     save_path = Path("graphs")
     if save_path.exists():
         if restart:
-            shutil.rmtree(save_path)
+            try:
+                shutil.rmtree(str(save_path.resolve()))
+            except:
+                print("Could not delete {}".format(save_path))
     else:
         save_path.mkdir()
 
@@ -138,4 +148,6 @@ if __name__ == "__main__":
     X = tweets.tweet
     y = tweets.polarity
 
+    start = timer()
     progressive_train(X, y, save_path)
+    print("Total training time for all sizes: {}s".format(timer()-start))
