@@ -14,3 +14,4 @@ class LogisticRegression:
                     multi_class='multinomial', solver='saga', max_iter=100))
             ]
         )
+        self.colour = 'g'

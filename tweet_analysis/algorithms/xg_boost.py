@@ -13,3 +13,4 @@ class XGBoost:
                 ('xgboost', xgb.XGBClassifier(objective='multi:softmax', num_class=3))
             ]
         )
+        self.colour = 'b'

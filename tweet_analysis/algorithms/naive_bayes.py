@@ -13,3 +13,4 @@ class NaiveBayes:
                 ('xgboost', MultinomialNB())
             ]
         )
+        self.colour = 'm'

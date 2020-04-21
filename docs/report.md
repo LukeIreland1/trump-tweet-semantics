@@ -21,6 +21,15 @@ TODO:
     - [By Accuracy](#by-accuracy)
     - [By Time](#by-time)
   - [Findings](#findings)
+    - [5776 Tweets (1/8 of total)](#5776-tweets-18-of-total)
+    - [11552 Tweets (1/4 of total)](#11552-tweets-14-of-total)
+    - [17328 Tweets (3/8 of total)](#17328-tweets-38-of-total)
+    - [23104 Tweets (1/2 of total)](#23104-tweets-12-of-total)
+    - [28880 Tweets (5/8 of total)](#28880-tweets-58-of-total)
+    - [34656 Tweets (3/4 of total)](#34656-tweets-34-of-total)
+    - [40432 Tweets (7/8 of total)](#40432-tweets-78-of-total)
+    - [46208 Tweets (All Tweets)](#46208-tweets-all-tweets)
+    - [Results across size variations](#results-across-size-variations)
 - [6. Conclusion](#6-conclusion)
 - [7. References](#7-references)
 
@@ -215,7 +224,7 @@ Logistic Regression was the most accurate algorithm by a fair margin, and was si
 
 Naive Bayes was the fastest, but was very closely followed by the less accurate SGD, and the considerably more accurate Logistic Regression.
 
-### Graph (Accuracy against Time)
+### (Initial) Graph (Accuracy against Time)
 
 ![Figure 3](images/output.svg "Figure 3")
 _Figure 3_
@@ -225,6 +234,53 @@ _Figure 3_
 Generally, the fastest algorithms were the least accurate, and vice versa. Logistic Regression appears to be the exception as it was the 3rd fastest and the most accurate.
 
 The discrepancy in time between certain algorithm evaluations was odd, so I decided to experiment further by seeing what happens when I train with varying data sizes.
+
+### 5776 Tweets (1/8 of total)
+
+![5776 Tweets](images/size5776.svg "5776 Tweets")
+_5776 Tweets_
+
+### 11552 Tweets (1/4 of total)
+
+![11552 Tweets](images/size11552.svg "11552 Tweets")
+_11552 Tweets_
+
+### 17328 Tweets (3/8 of total)
+
+![17328 Tweets](images/size17328.svg "17328 Tweets")
+_17328 Tweets_
+
+### 23104 Tweets (1/2 of total)
+
+![23104 Tweets](images/size23104.svg "23104 Tweets")
+_23104 Tweets_
+
+### 28880 Tweets (5/8 of total)
+
+![28880 Tweets](images/size28880.svg "28880 Tweets")
+_28880 Tweets_
+
+### 34656 Tweets (3/4 of total)
+
+![34656 Tweets](images/size34656.svg "34656 Tweets")
+_34656 Tweets_
+
+### 40432 Tweets (7/8 of total)
+
+![40432 Tweets](images/size40432.svg "40432 Tweets")
+_40432 Tweets_
+
+### 46208 Tweets (All Tweets)
+
+![46208 Tweets](images/output.svg "46208 Tweets")
+_46208 Tweets_
+
+### Results across size variations
+
+![Combined Results](images/combined.svg "Combined Results")
+_Combined Results_
+
+Overall, the relative positions of each algorithm with respect to each other stayed about the same, but there is some definite movement for some algorithms, meaning some algorithms perform better in comparison for smaller or larger datasets.
 
 # 6. Conclusion
 

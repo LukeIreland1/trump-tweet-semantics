@@ -1,0 +1,42 @@
+| Name                        | Accuracy | Time (s)   || --------------------------- | -------- | ---------- ||Logistic Regression|0.736|8.35||Random Forest|0.71|61.3||XGBoost|0.7|163||Stochastic Gradient Descent|0.7|6.09||Multilayer Perceptron|0.678|173||Naive Bayes|0.658|5.66|
+Accuracy (Mean): 0.697
+Accuracy (std): 0.0242
+Time (s) (mean): 69.6
+Time (s) (std): 72.3
+Tweets: 5776
+
+| Name                        | Accuracy | Time (s)   || --------------------------- | -------- | ---------- ||Logistic Regression|0.74|17.7||Random Forest|0.708|165||XGBoost|0.696|298||Stochastic Gradient Descent|0.682|12.6||Multilayer Perceptron|0.669|394||Naive Bayes|0.663|12.5|
+Accuracy (Mean): 0.693
+Accuracy (std): 0.0258
+Time (s) (mean): 150
+Time (s) (std): 151
+Tweets: 11552
+
+| Name                        | Accuracy | Time (s)   || --------------------------- | -------- | ---------- ||Logistic Regression|0.78|12.2||Random Forest|0.759|153||Stochastic Gradient Descent|0.726|8.78||XGBoost|0.719|211||Multilayer Perceptron|0.708|390||Naive Bayes|0.699|8.32|
+Accuracy (Mean): 0.732
+Accuracy (std): 0.0286
+Time (s) (mean): 131
+Time (s) (std): 140
+Tweets: 11552
+
+| Name                        | Accuracy | Time (s)   || --------------------------- | -------- | ---------- ||Logistic Regression|0.786|18.4||Random Forest|0.762|276||Multilayer Perceptron|0.731|706||XGBoost|0.72|293||Stochastic Gradient Descent|0.712|13.2||Naive Bayes|0.706|12.4|
+Accuracy (Mean): 0.736
+Accuracy (std): 0.0286
+Time (s) (mean): 220
+Time (s) (std): 249
+Tweets: 17328
+
+| Name                        | Accuracy | Time (s)   || --------------------------- | -------- | ---------- ||Logistic Regression|0.79|25.6||Random Forest|0.76|432||Multilayer Perceptron|0.733|941||XGBoost|0.713|387||Stochastic Gradient Descent|0.7|18.4||Naive Bayes|0.696|17.9|
+Accuracy (Mean): 0.732
+Accuracy (std): 0.0338
+Time (s) (mean): 304
+Time (s) (std): 334
+Tweets: 23104
+
+| Name                        | Accuracy | Time (s)   || --------------------------- | -------- | ---------- ||Logistic Regression|0.785|36.7||Random Forest|0.75|637||Multilayer Perceptron|0.72|1.28e+03||XGBoost|0.713|529||Naive Bayes|0.697|25.1||Stochastic Gradient Descent|0.68|25.8|
+Accuracy (Mean): 0.724
+Accuracy (std): 0.0348
+Time (s) (mean): 422
+Time (s) (std): 456
+Tweets: 28880
+

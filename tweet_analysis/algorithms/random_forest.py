@@ -13,3 +13,4 @@ class RandomForest:
                 ('random_forest', rf())
             ]
         )
+        self.colour = 'r'

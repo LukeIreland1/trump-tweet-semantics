@@ -18,28 +18,49 @@ from itertools import product
 
 np.set_printoptions(precision=2)
 
-COLOURS = {
-    'b': False,
-    'g': False,
-    'r': False,
-    'c': False,
-    'm': False,
-    'y': False
-}
+TEMPLATE = """
+Accuracy (Mean): {}
+Accuracy (std): {}
+Time (s) (mean): {}
+Time (s) (std): {}
+Tweets: {}
+
+"""
 
 
-def get_colour_code():
-    global COLOURS
-    for colour in COLOURS:
-        if not COLOURS[colour]:
-            COLOURS[colour] = True
-            return colour
-    COLOURS = {key: False for key in COLOURS.keys()}
-    return get_colour_code()
+def save_dict(d, size, save_path):
+    lines = [
+        "| Name                        | Accuracy | Time (s)   |",
+        "| --------------------------- | -------- | ---------- |"
+    ]
+    for i in range(len(d["Name"])):
+        lines.append(
+            "|{}|{}|{}|\n".format(
+                d["Name"][i],
+                format(d["Accuracy"][i], '.3g'),
+                format(d["Time (s)"][i], '.3g')
+            )
+        )
+    lines.append(
+        TEMPLATE.format(
+            format(d["Accuracy (Mean)"], '.3g'),
+            format(d["Accuracy (std)"], '.3g'),
+            format(d["Time (s) (mean)"], '.3g'),
+            format(d["Time (s) (std)"], '.3g'),
+            size
+        )
+    )
+    save_file = Path("results.txt")
+    if save_file.exists():
+        with save_file.open('a') as write_file:
+            write_file.writelines(lines)
+    else:
+        with save_file.open('w') as write_file:
+            write_file.writelines(lines)
+    print("Added results to {}".format(str(save_file)))
 
 
-def get_range(size, orig_size):
-    length = int(size*orig_size)
+def get_range(length, orig_size):
     start = randint(0, orig_size)
     if (start + length) > orig_size:
         start = (start + length) % orig_size
@@ -48,19 +69,47 @@ def get_range(size, orig_size):
 
 
 def progressive_train(X, y, save_path):
+    results = dict()
+    colours = dict()
+
     orig_size = len(X)
     sizes = [i*0.125 for i in range(1, 9)]
-    for size in sizes:
-        start, end = get_range(size, orig_size)
-        train(X[start:end], y[start:end], save_path)
+    lengths = [int(size*orig_size) for size in sizes]
 
+    print("Training on tweets of sizes: {}".format(lengths))
+    print("Original size is: {}".format(orig_size))
+
+    for length in lengths:
+        start, end = get_range(length, orig_size)
+        results[length] = train(X[start:end], y[start:end], save_path)
+
+    algorithm_results = {
+        algorithm.name: {"Accuracy": [], "Time": []}
+        for algorithm in algorithms for _, algorithms in results
+    }
+    for length, algorithms in results:
+        for algorithm in algorithms:
+            algorithm_results[algorithm.name]["Accuracy"].append(
+                algorithm.accuracy)
+            algorithm_results[algorithm.name]["Time"].append(algorithm.time)
+            colours[algorithm.name] = algorithm.colour
+
+    for algorithm in algorithm_results:
+        plt.plot(algorithm["Accuracy"], algorithm["Time"], colours[algorithm["Name"]], label=algorithm["Name"])
+        plt.xlabel("Accuracy")
+        plt.ylabel("Time (s)")
+        plt.legend()
+
+    save_file = save_path.joinpath("combined.svg")
+    plt.savefig(str(save_file))
 
 def train(X, y, save_path):
-    save_file = save_path.joinpath("size{}.svg".format(len(X)))
+    size = len(X)
+    save_file = save_path.joinpath("size{}.svg".format(size))
     print("Searching for results at {}".format(save_file))
     if save_file.exists():
         return
-    print("Training on {} tweets".format(len(X)))
+    print("Training on {} tweets".format(size))
 
     algorithms = [XGBoost(), LogisticRegression(), RandomForest(),
                   MultilayerPerceptron(), NaiveBayes(), StochasticGD()]
@@ -91,19 +140,20 @@ def train(X, y, save_path):
         "Time (s) (std)": std_time
     }
 
-    df = pd.DataFrame(data)
-    print(df)
+    save_dict(data, size, save_path)
 
     for algorithm in algorithms:
         plt.plot(algorithm.accuracy, algorithm.time,
-                 "{}o".format(get_colour_code()), label=algorithm.name)
+                 "{}o".format(algorithm.colour), label=algorithm.name)
         plt.xlabel("Accuracy")
         plt.ylabel("Time (s)")
         plt.legend()
 
-    print("Saved results to {}".format(str(save_file)))
+    print("Saved graph to {}".format(str(save_file)))
     plt.savefig(str(save_file))
     plt.clf()
+
+    return algorithms
 
 
 def avg(scores):
@@ -133,12 +183,13 @@ def evaluate(algorithm, X, y):
 
 
 if __name__ == "__main__":
-    restart = False
+    restart = True
     save_path = Path("graphs")
     if save_path.exists():
         if restart:
             try:
                 shutil.rmtree(str(save_path.resolve()))
+                save_path.mkdir()
             except:
                 print("Could not delete {}".format(save_path))
     else:

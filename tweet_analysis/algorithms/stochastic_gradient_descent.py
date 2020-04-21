@@ -15,3 +15,4 @@ class StochasticGD:
                         max_iter=5, tol=None))
             ]
         )
+        self.colour = 'y'

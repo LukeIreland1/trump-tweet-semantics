@@ -13,3 +13,4 @@ class MultilayerPerceptron:
                 ('xgboost', mlp(hidden_layer_sizes=(10, 10, 10), max_iter=1000))
             ]
         )
+        self.colour = 'c'
