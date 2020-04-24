@@ -3,7 +3,7 @@
 
 TODO:
 
-- New page for new chapter
+- Number/Label tables
 
 # Table of Contents <!-- omit in toc -->
 
@@ -109,11 +109,11 @@ I will specifically be using multinomial logistic regression, as I have 3 classe
 Softmax is simply: e^scores/sum(scores), where scores is a vector, where each element corresponds to a word and sentiment prediction.
 
 Stochastic Gradient Descent is an iterative method for optimizing an objective function with suitable smoothness properties.
-The objective function to be minimised is:
+The objective function (loss relative to actual sentiment polarity) to be minimised is:
 
 !["SGD Equation"](images/sgd.svg "SGD Equation")
 
-where the parameter w (sentiment polarity) is to be estimated. Each summand function Q<sub>i</sub> is typically associated with the i-th observation in the data set.[^16]
+where the parameter w (sentiment polarity) is to be estimated. Each summand function Q<sub>i</sub> is typically associated with the i-th observation in the data set of size n.[^16]
 
 Due to their simple effectiveness, I assume Naive Bayes, Random Forest, and Logistic Regression will perform the best to begin with, certainly in terms of speed, but with tweaking, Multilayer Perceptron and XGB should provide comparable or better accuracy.
 
@@ -121,13 +121,17 @@ After coming across this article on [algorithm comparison](https://medium.com/to
 
 When implementing my models, I discovered that the fairest, most reproducible method of comparison was using Scikit Learn's [Pipelines](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^16], and began altering my code to minimise the difference between how classifiers are ran, to isolate the performance of the classifier down to the algorithm itself and not any pre-processing. I had to cut Latent Sentiment Analysis as it didn't fit this streamlined format, due to the way it retrospectively trains itself. Scikit Learn is another Python NLP library that builds on the NLP available in NLTK. Pipelines are flexible data types that contain steps which define how a particular algorithm should be prepared, and then trained.
 
-The function that would be used to evaluate the pipelines: `cross_val_score`, gave a `scoring` parameter with many options[^18], I chose accuracy score, which simply compares prediction labels with actual labels, but there were a range of alternatives available, such as average precision, balanced accuracy score, Brier score, F1 score and Normalized Discounted Cumulative Gain.
+The function that would be used to evaluate the pipelines: `cross_val_score`, gave a `scoring` parameter with many options[^18], I chose accuracy score, which simply compares prediction labels with actual labels, but there were a range of alternatives available, such as average precision, balanced accuracy score, Brier score, F1 score and Normalized Discounted Cumulative Gain. Precision Recall is useful because (and add to Chapter 5)
 
 For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^18], which I found from [this](https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2)[^19] article attempting the same thing. Markovify is a Python library that uses Markov chains to generate text based on an input corpora. The article listed multiple approaches, including using a Keras API and k-means clustering to build a Machine Learning model to feed into tweet generators, but that added a significant layer of obscurity, and made less coherent tweets.
 
 # 3. Data Pre-processing
 
 ## 3.1 Dataset
+
+TODO:
+
+- Add wordcloud before and after cleaning
 
 The dataset I extracted from Trump Twitter Archive, was last updated 5th March 2020 and contains 46208 tweets.
 
@@ -184,7 +188,7 @@ I originally intended to implement the algorithms themselves, but came across Sc
 
 As a result, I only chose algorithms that were implemented by or compatible with Scikit-Learn, meaning I had to drop some algorithms I was considering for comparison during my research stage. Each algorithm was implemented as a class, with appropriate evaluation functions, and allowed for configuration through parameters. XGBoost offered the largest amount of customisation, but there were only a few options for multi-class classification, so I went with softmax for its objective parameter, as it had the highest accuracy out of the few options available.
 
-I wanted to use k-fold cross validation on the data, which involves splitting the data into k equal sized partitions, where one of the partitions is used as validation data for testing the model, with the remaining k-1 partitions used for training the model. This split repeats k times, in a way in which every partition is used as the validation at least one, then averaged to produce a single estimation[^17].
+I wanted to use k-fold cross validation on the data, in order to increase the fairness of training. This involves splitting the data into k equal sized partitions, where one of the partitions is used as validation data for testing the model, with the remaining k-1 partitions used for training the model. This split repeats k times, in a way in which every partition is used as the validation at least one, then averaged to produce a single estimation[^17].
 
 K-fold cross validation is built into `cross_val_score`, which has k-value parameter, which I passed a value of 10 for.
 
@@ -195,6 +199,8 @@ Each algorithm had to be trained through all 46208 tweets, 10 times through k-fo
 A graph is created to compare accuracy against time using `matplotlib.pyplot`.
 
 # 5. Evaluation
+
+In this chapter, I will evaluate the comparisons using their accuracy and time.
 
 ## Results
 
