@@ -18,8 +18,10 @@ TODO:
 - [4. How I compared each Sentiment Classification algorithm to one another](#4-how-i-compared-each-sentiment-classification-algorithm-to-one-another)
 - [5. Evaluation](#5-evaluation)
   - [Results](#results)
-    - [By Accuracy](#by-accuracy)
-    - [By Time](#by-time)
+    - [Aggregated Statistics](#aggregated-statistics)
+    - [By Accuracy (All Tweets)](#by-accuracy-all-tweets)
+    - [By Precision (All Tweets)](#by-precision-all-tweets)
+    - [By Time (All Tweets)](#by-time-all-tweets)
   - [Findings](#findings)
     - [5776 Tweets (1/8 of total)](#5776-tweets-18-of-total)
     - [11552 Tweets (1/4 of total)](#11552-tweets-14-of-total)
@@ -66,7 +68,7 @@ While looking at the various algorithms available to perform this sort of task, 
 
 The aim of this project is to perform various types of analysis on the language used in Trump's tweet to see if any interesting trends arise. Mainly, this project seeks to inform and entertain people interested in Trump, for either good or bad reasons.
 
-I will also be evaluating the performance of sentiment analysis algorithms on their speed and accuracy.
+I will also be evaluating the performance of sentiment analysis algorithms on their speed, as well as their accuracy, precision and recall scores.
 
 ## 1.3. Objectives
 
@@ -75,7 +77,7 @@ I will also be evaluating the performance of sentiment analysis algorithms on th
 3. Analyse whole tweets for sentiment.
 4. Create unbiased classifer to initally label dataset
 5. Find sentiment classifer algorithms
-6. Compare classification algorithms to see which is the most accurate and the fastest.
+6. Compare classification algorithms to see which is the most accurate, most precise, yields the highest recall score, and the fastest.
 7. Create tweets using data from Trump's Twitter account.
 
 # 2. Literature Review
@@ -121,7 +123,7 @@ After coming across this article on [algorithm comparison](https://medium.com/to
 
 When implementing my models, I discovered that the fairest, most reproducible method of comparison was using Scikit Learn's [Pipelines](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^16], and began altering my code to minimise the difference between how classifiers are ran, to isolate the performance of the classifier down to the algorithm itself and not any pre-processing. I had to cut Latent Sentiment Analysis as it didn't fit this streamlined format, due to the way it retrospectively trains itself. Scikit Learn is another Python NLP library that builds on the NLP available in NLTK. Pipelines are flexible data types that contain steps which define how a particular algorithm should be prepared, and then trained.
 
-The function that would be used to evaluate the pipelines: `cross_val_score`, gave a `scoring` parameter with many options[^18], I chose accuracy score, which simply compares prediction labels with actual labels, but there were a range of alternatives available, such as average precision, balanced accuracy score, Brier score, F1 score and Normalized Discounted Cumulative Gain. Precision Recall is useful because (and add to Chapter 5)
+The function that would be used to evaluate the pipelines: `cross_val_score`, gave a `scoring` parameter with many options[^18], I chose accuracy score, which simply compares prediction labels with actual labels, but there were a range of alternatives available, such as average precision, balanced accuracy score, Brier score, F1 score and Normalized Discounted Cumulative Gain. I later went back to this and also chose Precision score, and Recall score. These two score types required an averaging function to be set, with the options being: Micro - Perform the scoring function, but don't average; Macro - Perform the scoring function, then find the unweighted mean; Weighted - Perform the scoring function, then find the weighted mean. Weighted was the only scoring function that accounted for label imbalance, so as I already had accuracy as a metric, I thought weighted made the most sense.
 
 For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^18], which I found from [this](https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2)[^19] article attempting the same thing. Markovify is a Python library that uses Markov chains to generate text based on an input corpora. The article listed multiple approaches, including using a Keras API and k-means clustering to build a Machine Learning model to feed into tweet generators, but that added a significant layer of obscurity, and made less coherent tweets.
 
@@ -137,9 +139,13 @@ The dataset I extracted from Trump Twitter Archive, was last updated 5th March 2
 
 I used NLTK to look at the most common words and phrases of different lengths, to explore the dataset.
 
-Here is a word cloud I created using the Python library wordcloud.
+Here is a word cloud I created using the Python library wordcloud, **without** tweet cleaning.
 ![Figure 2](images/wordcloud4.png "Figure 2")
 _Figure 2_ - WordCloud of phrases of length 4.
+
+Here is one produced after tweet cleaning:
+![Figure 3](images/cleancloud.svg "Figure 3")
+_Figure 3_ - WordCloud of phrases of length 4.
 
 I created my own class using Markovify[^20], that would force the library's generator to generate tweets (280 characters max) in Trump-like prose containing a given input word.
 
@@ -198,41 +204,78 @@ Each algorithm had to be trained through all 46208 tweets, 10 times through k-fo
 
 A graph is created to compare accuracy against time using `matplotlib.pyplot`.
 
+I later decided I wanted to train on various sizes of tweets, and use more than one metric, so I switched to `cross_validate` from Scikit-Learn and used `multiprocessing`. `cross_validate` is identical to `cross_val_score`, but allows for multiple metrics. `multiprocessing` uses multiple processes, instead of threads, which in this case, resulted in better performance.
+
+The training time per "step" (a given data length) was improved, but it wasn't by a huge amount. I added `accuracy`, `precision_weighted` and `recall_weighted` to the `scoring` array passed to `cross_validate` which returned results for each metric, as well as a `score_time` passed this information through tuples to create an `Algorithm` class, with attributes `name`, `accuracy`, `precision`, `recall` and `time`. I created a dictionary for each data length, with each value being another dictionary containing the results for each algorithm, as well as aggregated statistics, such as mean and standard deviation. I also created an individual graph for each data size.
+
+The data lengths used were 1/8, 1/4, 3/8, 1/2, 5/8, 3/4, 7/8, 1/1 of the total 46208 tweets.
+
+These dictionaries were passed to an export function that saved the results to a text file, and created a combined graph. I also created an import function if I wished to alter the graph, without running the ~3 hour long program again.
+
 # 5. Evaluation
 
 In this chapter, I will evaluate the comparisons using their accuracy and time.
 
 ## Results
 
-### By Accuracy
+### Aggregated Statistics
 
-| Name                        | Accuracy | Time (s)   |
-| --------------------------- | -------- | ---------- |
-| Logistic Regression         | 0.800922 | 37.240018  |
-| Random Forest               | 0.759241 | 842.787394 |
-| Multilayer Perceptron       | 0.757835 | 804.682227 |
-| XGBoost                     | 0.715872 | 405.671944 |
-| Naive Bayes                 | 0.713579 | 32.224075  |
-| Stochastic Gradient Descent | 0.674234 | 32.702595  |
+Accuracy (Mean): 0.738
+Accuracy (std): 0.0412
+Precision (Mean): 0.734
+Precision (std): 0.0444
+Recall (Mean): 0.738
+Recall (std): 0.0412
+Time (s) (mean): 0.347
+Time (s) (std): 0.264
+
+The accuracy, precision and recall's mean and standard deviation are all quite similar, with recall being identical to accuracy in this case.
+
+### By Accuracy (All Tweets)
+
+| Name                        | Accuracy | Precision | Recall | Time (s) |
+| --------------------------- | -------- | --------- | ------ | -------- |
+| Logistic Regression         | 0.801    | 0.781     | 0.801  | 0.2      |
+| Multilayer Perceptron       | 0.763    | 0.782     | 0.763  | 0.208    |
+| Random Forest               | 0.76     | 0.765     | 0.76   | 0.927    |
+| XGBoost                     | 0.716    | 0.715     | 0.716  | 0.336    |
+| Naive Bayes                 | 0.714    | 0.678     | 0.714  | 0.21     |
+| Stochastic Gradient Descent | 0.674    | 0.681     | 0.674  | 0.203    |
+<caption>Table 1</caption>
 
 Logistic Regression was the most accurate algorithm by a fair margin, and was significantly faster than the closest competition.
 
-### By Time
+### By Precision (All Tweets)
 
-| Name                        | Accuracy | Time (s)   |
-| --------------------------- | -------- | ---------- |
-| Naive Bayes                 | 0.713579 | 32.224075  |
-| Stochastic Gradient Descent | 0.674234 | 32.702595  |
-| Logistic Regression         | 0.800922 | 37.240018  |
-| XGBoost                     | 0.715872 | 405.671944 |
-| Multilayer Perceptron       | 0.757835 | 804.682227 |
-| Random Forest               | 0.759241 | 842.787394 |
+| Name                        | Accuracy | Precision | Recall | Time (s) |
+| --------------------------- | -------- | --------- | ------ | -------- |
+| Multilayer Perceptron       | 0.763    | 0.782     | 0.763  | 0.208    |
+| Logistic Regression         | 0.801    | 0.781     | 0.801  | 0.2      |
+| Random Forest               | 0.76     | 0.765     | 0.76   | 0.927    |
+| XGBoost                     | 0.716    | 0.715     | 0.716  | 0.336    |
+| Stochastic Gradient Descent | 0.674    | 0.681     | 0.674  | 0.203    |
+| Naive Bayes                 | 0.714    | 0.678     | 0.714  | 0.21     |
+<caption>Table 2</caption>
 
-Naive Bayes was the fastest, but was very closely followed by the less accurate SGD, and the considerably more accurate Logistic Regression.
+Multilayer Perceptron was the most precise, but only by 0.001 more than Logistic Regression.
 
-### (Initial) Graph (Accuracy against Time)
+### By Time (All Tweets)
 
-![Figure 3](images/output.svg "Figure 3")
+| Name                        | Accuracy | Precision | Recall | Time (s) |
+| --------------------------- | -------- | --------- | ------ | -------- |
+| Logistic Regression         | 0.801    | 0.781     | 0.801  | 0.2      |
+| Stochastic Gradient Descent | 0.674    | 0.681     | 0.674  | 0.203    |
+| Multilayer Perceptron       | 0.763    | 0.782     | 0.763  | 0.208    |
+| Naive Bayes                 | 0.714    | 0.678     | 0.714  | 0.21     |
+| XGBoost                     | 0.716    | 0.715     | 0.716  | 0.336    |
+| Random Forest               | 0.76     | 0.765     | 0.76   | 0.927    |
+<caption>Table 3</caption>
+
+Logistic Regression was the fastest, closley followed by SGD and Multilayer Perceptron.
+
+### (Initial) Graph (Score against Time)
+
+![Figure 3](images/size46208.svg "Figure 3")
 _Figure 3_
 
 ## Findings
@@ -278,7 +321,7 @@ _40432 Tweets_
 
 ### 46208 Tweets (All Tweets)
 
-![46208 Tweets](images/output.svg "46208 Tweets")
+![46208 Tweets](images/size46208.svg "46208 Tweets")
 _46208 Tweets_
 
 ### Results across size variations

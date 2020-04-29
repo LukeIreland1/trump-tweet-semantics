@@ -50,14 +50,6 @@ def get_phrases(words, length=2):
     return(phrases)
 
 
-# Needs adding to a function or class
-tweets = get_tweets()
-words = get_words(tweets)
-phrases = get_phrases(words, length=4)
-words = nltk.FreqDist(words)
-print(words.most_common(50))
-# print(nltk.FreqDist(phrases).most_common(50))
-
 
 def clean_tweet(tweet):
     user_removed = re.sub(r'@[A-Za-z0-9]+', '', tweet)
@@ -87,8 +79,7 @@ def display_cloud():
     plt.imshow(wordcloud)
     plt.axis("off")
     plt.tight_layout(pad=0)
-
-    plt.show()
+    plt.savefig("docs/images/cleancloud.svg")
 
 
 def get_word_freq(word):
@@ -100,7 +91,7 @@ def make_tweets(tweets):
     text_model = markovify.Text(tweets)
 
     # Print five randomly-generated sentences
-    for i in range(5):
+    for _ in range(5):
         print(text_model.make_short_sentence(280))
 
 
@@ -110,7 +101,7 @@ def make_tweets_from_word(tweets, word):
     text_model = TrumpModel(results, word)
 
     # Print five randomly-generated sentences
-    for i in range(5):
+    for _ in range(5):
         print(text_model.make_short_sentence())
 
 
@@ -125,7 +116,7 @@ class TrumpModel(markovify.Text):
             sentence = self.make_sentence()
             if sentence:
                 if len(sentence) > 0 and len(sentence) < 280:
-                    if word in sentence:
+                    if self.word.lower() in sentence.lower():
                         return sentence
 
 
@@ -201,8 +192,16 @@ def run_analysis():
         )
     )
 
+# Needs adding to a function or class
+tweets = get_clean_tweets(get_tweets())
+words = get_words(tweets)
+phrases = get_phrases(words, length=4)
+words = nltk.FreqDist(words)
+print(words.most_common(50))
+# print(nltk.FreqDist(phrases).most_common(50))
+
 run_analysis()
-# display_cloud()
+display_cloud()
 word = "Biden"
 count = words[word.lower()]
 print("Trump said {} {} times".format(word, count))
