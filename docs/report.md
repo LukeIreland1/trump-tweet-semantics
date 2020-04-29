@@ -140,10 +140,12 @@ The dataset I extracted from Trump Twitter Archive, was last updated 5th March 2
 I used NLTK to look at the most common words and phrases of different lengths, to explore the dataset.
 
 Here is a word cloud I created using the Python library wordcloud, **without** tweet cleaning.
+
 ![Figure 2](images/wordcloud4.png "Figure 2")
 _Figure 2_ - WordCloud of phrases of length 4.
 
 Here is one produced after tweet cleaning:
+
 ![Figure 3](images/cleancloud.svg "Figure 3")
 _Figure 3_ - WordCloud of phrases of length 4.
 
