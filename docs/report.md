@@ -1,9 +1,7 @@
 <md-cover title='Trump Tweet Sentiment Analysis' author='Luke Ireland'></md-cover>
 <md-style name="latex"></md-style>
 
-TODO:
-
-- Number/Label tables
+WC: 2600
 
 # Table of Contents <!-- omit in toc -->
 
