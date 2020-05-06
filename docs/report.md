@@ -204,7 +204,7 @@ Each algorithm had to be trained through all 46208 tweets, 10 times through k-fo
 
 A graph is created to compare accuracy against time using `matplotlib.pyplot`.
 
-I later decided I wanted to train on various sizes of tweets, and use more than one metric, so I switched to `cross_validate` from Scikit-Learn and used `multiprocessing`. `cross_validate` is identical to `cross_val_score`, but allows for multiple metrics. `multiprocessing` uses multiple processes, instead of threads, which in this case, resulted in better performance.
+I later decided I wanted to train on various sizes of tweets, and use more than one metric, so I switched to `cross_validate` from Scikit-Learn and used `multiprocessing`. `cross_validate` is identical to `cross_val_score`, but allows for multiple metrics. `multiprocessing` uses multiple processes, instead of threads, which in this case, resulted in better performance. Upon returning to this to measure how much faster this improvement, I found a further improvement in Ray's multiprocessing library[^18]. Ray is a Python library focusing on distributed and parallel processing[^19]. Ultimately, I decided to compare the serial case to both Python's and Ray's multiprocessing libraries.
 
 The training time per "step" (a given data length) was improved, but it wasn't by a huge amount. I added `accuracy`, `precision_weighted` and `recall_weighted` to the `scoring` array passed to `cross_validate` which returned results for each metric, as well as a `score_time` passed this information through tuples to create an `Algorithm` class, with attributes `name`, `accuracy`, `precision`, `recall` and `time`. I created a dictionary for each data length, with each value being another dictionary containing the results for each algorithm, as well as aggregated statistics, such as mean and standard deviation. I also created an individual graph for each data size.
 
@@ -354,8 +354,10 @@ If I had more time, I would have tweaked all algorithms, using all available par
 [^15]: https://en.wikipedia.org/wiki/Logistic_regression
 [^16]: https://en.wikipedia.org/wiki/Stochastic_gradient_descent
 [^17]: https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8
+[^18]: https://towardsdatascience.com/10x-faster-parallel-python-without-python-multiprocessing-e5017c93cce1
 [^18]: https://scikit-learn.org/stable/modules/classes.html#module-sklearn.metrics
 [^18]: https://en.wikipedia.org/wiki/Cross-validation_(statistics)#k-fold_cross-validation
+[^19]: https://github.com/ray-project/ray
 [^19]: https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2
 [^20]: https://en.wikipedia.org/wiki/WordNet
 [^21]: https://en.wikipedia.org/wiki/Synonym_ring
