@@ -90,19 +90,146 @@ I saw guides such as [Basic Binary Sentiment Analysis using NLTK](https://toward
 Eventually, I fell upon this [article](https://www.geeksforgeeks.org/twitter-sentiment-analysis-using-python/)[^7] which used TextBlob to perform sentiment analysis instead.
 TextBlob is a simplified text processing library for Python, and provides a simple API for performing Natural Language Processing tasks, such as speech tagging, noun extraction, various forms of classification, translation and, most importantly, sentiment analysis. I used TextBlob briefly to get an understanding on how I could label tweets in preparation for the SAA comparisons.
 
-I needed more methods of sentiment analysis, so I decided on using [Latent Sentiment Analysis(LSA)](https://medium.com/@adi_enasoaie/easy-lsi-pipeline-using-scikit-learn-a073f2484408), Random Forests (used as both part of LSA, and independently), [XGBoost](https://www.datacamp.com/community/tutorials/xgboost-in-python)[^9], Logistic Regression and Multilayer Perceptron models to compare to my Naive Bayes classifier.
-
-Latent Sentiment Analysis(LSA) is one SA technique that scores a corpus based on an assumption meaning similar meaning words will appear in similar pieces of text[^10].
+I needed more methods of sentiment analysis, so I decided on Random Forests, [XGBoost](https://www.datacamp.com/community/tutorials/xgboost-in-python)[^9], Logistic Regression and Multilayer Perceptron models to compare to my Naive Bayes classifier.
 
 Naive Bayes classifiers are simple probabilistic classifers which applies Bayes' theorem of naive assumptions between the features. I will be using a Multinomial Naive Bayes classifier, which uses feature vectors in the form of histograms, which count the number of times an event (in this case - sentiment) was observed in a particular instance (in this case - document)[^11].
 
+```python
+sentiments = {
+  "neg":0,
+  "neut":0,
+  "pos":0
+}
+for tweet in tweets:
+  for word in tweet:
+    if sentiment(word) == -1:
+      sentiments["neg"]+=1
+    elif sentiment(word) == 0:
+      sentiments["neut"]+=1
+    elif sentiment(word) == 1:
+      sentiments["pos"]+=1
+return max(sentiments)
+```
+
 Random Forest classifiers operate by constructing multiple decision trees at training time, and uses the mode of each individual tree's classification of the input vector (in this case - array of sentiments) to decide upon a class. A decision tree is a tree that consists of parent nodes that contain decisions or clauses, and leaf nodes with a classification[^12].
+
+```python
+for tweet in tweets:
+  tree = DTree(tweet)
+  sentiment = tree.mode()
+  print(tweet, sentiment)
+
+class DTree:
+  def __init__(self, text):
+    self.children = []
+    self.scores = []
+    self.sentiment = None
+    self.text = text
+    calculate()
+
+  def calculate(self, weight=1):
+    length = len(text.split())
+    if length == 1:
+      self.sentiment = get_sentiment(text) * weight # Sentiwordnet
+      self.scores = [self.sentiment]
+    else:
+      for word in text:
+        self.children.append(DTree(word))
+      for child in self.children:
+        self.scores += child.scores
+
+  def mode(self):
+    neutrals = 0
+    negatives = 0
+    positives = 0
+    for child in self.children:
+      if child.sentiment = -1:
+        negatives += 1
+      elif child.sentiment = 0:
+        neutrals += 1
+      else:
+        positives += 1
+    return max(neutrals, negatives, positives)
+
+  def adjust(self, loss):
+    new_children = []
+    for child in self.children:
+      new_children.append(child.calculate(weight=loss))
+    self.children = new_children
+```
 
 XGBoost classifier is a gradient boosting algorithm that uses proportional shrinking of leaf nodes, smart tree penalization and differentiation to improve it's understanding of each of the classes used in training. It uses a variety of parameters requiring optimisation to improve accuracy. Gradient boosting algorithms produce prediction models in the form of an ensemble weak prediction model, typically decision trees (similar to random forest). The models are then built in stages, and generalised by allowing optimisation of an arbitrary differentiable loss function, often softmax for multiclass classifiers[^13].
 
+
+```python
+
+def softmax(tree):
+  scores = []
+  for child in tree.children:
+    scores += child.scores
+  return (e^scores)/sum(scores)
+
+for tweet in tweets:
+  ...
+  loss = softmax(tree)
+  while loss > desired:
+    tree.adjust(loss)
+    loss = softmax(tree)
+```
+
 A Multilayer Perceptron is a type of feedforward artificial neural network, consisting of an input layer, a hidden layer and an output layer. Each non-input node is a neuron that uses a nonlinear activation function (to calculate the neuron's output from the input nodes), and uses a supervised learning technique called backpropagation (hence feedforward), similar to the least mean squares algorithm, for training. Backpropagation computes the gradient of the loss function with respect to the weights of the network for a single input–output(tweet-sentiment) example. Learning is performed by changing the connection weights between the layers, based on the amount of error between the prediction and actual class, calculated through backpropagation[^14].
 
-Logisitic Regression is a classifier model that uses a logistic function to model a dependent variable. It measures the relationship between the categorical dependent variable and one or more independent variables by estamating probabilities using a logistic function, which is the cumulative distribution function of logistic regression.
+```python
+class MLP:
+  def __init__(self, text):
+    self.input = [InputNode(word) for word in text]
+    self.hidden = [HiddenNode(self.input) for node in self.input]
+    self.output = OutputNode(self.hidden)
+    for node in self.hidden
+      node.parent = self.output
+    for epochs in range(10):
+      for node in self.hidden:
+        node.calculate()
+    print(self.output.prediction)
+
+class Node:
+  def __init__(self):
+    pass
+
+class InputNode(Node):
+  def __init__(self, text):
+    self.text = text
+
+class HiddenNode(Node):
+  def __init__(self, children, weight=1):
+    self.scores = None
+    self.weight = weight
+    self.children = children
+
+  def calculate(self)
+    scores = []
+    for child in self.children:
+      text = child.text
+      scores.append(get_sentiment(text) * self.weight)
+    self.loss = loss_func(scores)
+    self.scores = scores
+    self.parent.result()
+
+class OutputNode(Node):
+  def __init__(self, children):
+    self.prediction = None
+    self.children = children
+    self.weights = [1 for child in self.children]
+
+  def result(self):
+    scores = []
+    for i in range(len(self.children)):
+      scores.append(self.children[i].score * self.weights[i])
+    self.prediction = mean(scores)
+    self.weights = [loss_func_deriv(score) for score in scores]
+```
+
+Logistic Regression is a classifier model that uses a logistic function to model a dependent variable. It measures the relationship between the categorical dependent variable and one or more independent variables by estamating probabilities using a logistic function, which is the cumulative distribution function of logistic regression.
 
 I will specifically be using multinomial logistic regression, as I have 3 classes. The score vector for a given document (tweet) is in the format: scores(X,k) = β<sub>k</sub>\*X, where X is a vector of the words that make up the tweet, and β is a vector of weights corresponding to outcome (sentiment) k. This score vector is then used by the softmax function to calculate a probability of the tweet belonging to that sentiment[^15].
 
@@ -119,7 +246,7 @@ Due to their simple effectiveness, I assume Naive Bayes, Random Forest, and Logi
 
 After coming across this article on [algorithm comparison](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^16], I found that creating a tf-idf transformer to use on the initial bag of words model, prior to training, massively boosts accuracy.
 
-When implementing my models, I discovered that the fairest, most reproducible method of comparison was using Scikit Learn's [Pipelines](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^16], and began altering my code to minimise the difference between how classifiers are ran, to isolate the performance of the classifier down to the algorithm itself and not any pre-processing. I had to cut Latent Sentiment Analysis as it didn't fit this streamlined format, due to the way it retrospectively trains itself. Scikit Learn is another Python NLP library that builds on the NLP available in NLTK. Pipelines are flexible data types that contain steps which define how a particular algorithm should be prepared, and then trained.
+When implementing my models, I discovered that the fairest, most reproducible method of comparison was using Scikit Learn's [Pipelines](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^16], and began altering my code to minimise the difference between how classifiers are ran, to isolate the performance of the classifier down to the algorithm itself and not any pre-processing. Scikit Learn is another Python NLP library that builds on the NLP available in NLTK. Pipelines are flexible data types that contain steps which define how a particular algorithm should be prepared, and then trained.
 
 The function that would be used to evaluate the pipelines: `cross_val_score`, gave a `scoring` parameter with many options[^18], I chose accuracy score, which simply compares prediction labels with actual labels, but there were a range of alternatives available, such as average precision, balanced accuracy score, Brier score, F1 score and Normalized Discounted Cumulative Gain. I later went back to this and decided to add multiple metrics, so I had to instead use `cross_validate` and chose Precision score, and Recall score. These two score types required an averaging function to be set, with the options being: Micro - Perform the scoring function, but don't average; Macro - Perform the scoring function, then find the unweighted mean; Weighted - Perform the scoring function, then find the weighted mean. Weighted was the only scoring function that accounted for label imbalance, so as I already had accuracy as a metric, I thought weighted made the most sense.
 
@@ -204,7 +331,9 @@ Each algorithm had to be trained through all 46208 tweets, 10 times through k-fo
 
 A graph is created to compare accuracy against time using `matplotlib.pyplot`.
 
-I later decided I wanted to train on various sizes of tweets, and use more than one metric, so I switched to `cross_validate` from Scikit-Learn and used `multiprocessing`. `cross_validate` is identical to `cross_val_score`, but allows for multiple metrics. `multiprocessing` uses multiple processes, instead of threads, which in this case, resulted in better performance. Upon returning to this to measure how much faster this improvement, I found a further improvement in Ray's multiprocessing library[^18]. Ray is a Python library focusing on distributed and parallel processing[^19]. Ultimately, I decided to compare the serial case to both Python's and Ray's multiprocessing libraries.
+I later decided I wanted to train on various sizes of tweets, and use more than one metric, so I switched to `cross_validate` from Scikit-Learn and used `multiprocessing`. `cross_validate` is identical to `cross_val_score`, but allows for multiple metrics. `multiprocessing` uses multiple processes, instead of threads, which in this case, resulted in better performance. Upon returning to this to measure how much faster this improvement, I found a further improvement in Ray's multiprocessing library[^18]. Ray is a Python library focusing on distributed and parallel processing[^19]. Ultimately, I decided to compare the serial case to both Python's and Ray's multiprocessing libraries. Developing on AArch64, meant that I had to build Ray myself, which introduced many problems, and I decided to abandon this as I couldn't successfully build it.
+
+The parallel version took 2.79 hours, and the serial version took X hours. This is an improvement of 100*X/2.79%
 
 The training time per "step" (a given data length) was improved, but it wasn't by a huge amount. I added `accuracy`, `precision_weighted` and `recall_weighted` to the `scoring` array passed to `cross_validate` which returned results for each metric, as well as a `score_time` passed this information through tuples to create an `Algorithm` class, with attributes `name`, `accuracy`, `precision`, `recall` and `time`. I created a dictionary for each data length, with each value being another dictionary containing the results for each algorithm, as well as aggregated statistics, such as mean and standard deviation. I also created an individual graph for each data size.
 
