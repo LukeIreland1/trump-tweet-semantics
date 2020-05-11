@@ -13,6 +13,8 @@ import pandas as pd
 import sklearn.exceptions
 from sklearn.model_selection import cross_validate
 
+import psutil
+import ray
 from algorithms.algorithm import Algorithm
 from algorithms.logistic_regression import LogisticRegression
 from algorithms.multilayer_perceptron import MultilayerPerceptron
@@ -25,6 +27,8 @@ from utils.tweet_getter import TweetGetter
 warnings.filterwarnings(
     "ignore", category=sklearn.exceptions.UndefinedMetricWarning)
 
+num_cpus = psutil.cpu_count(logical=False)
+ray.init(num_cpus=num_cpus)
 
 np.set_printoptions(precision=2)
 
@@ -294,7 +298,9 @@ def train(X, y, save_path, length):
                   MultilayerPerceptron(), NaiveBayes(), StochasticGD()]
 
     start = timer()
-    algorithms = [evaluate(algorithm, X, y) for algorithm in algorithms]
+    args = [(algorithm, X, y) for algorithm in algorithms]
+    with multiprocessing.Pool() as pool_inner:
+        algorithms = pool_inner.starmap(evaluate, args)
     print("Total training time for size {}: {}s".format(size, timer() - start))
 
     algorithms.sort(key=lambda x: x.accuracy, reverse=True)

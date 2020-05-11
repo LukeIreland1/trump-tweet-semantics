@@ -369,23 +369,32 @@ def evaluate(algorithm, X, y):
 
 
 if __name__ == "__main__":
-    # restart = True
-    # save_path = Path("graphs")
-    # if restart:
-    #     try:
-    #         shutil.rmtree(str(save_path.resolve()))
-    #         save_path.mkdir()
-    #         Path("results.txt").unlink()
-    #     except:
-    #         print("Failed to clear files from previous run")
-    # else:
-    #     save_path.mkdir()
+    restart = True
+    save_path = Path("graphs")
+    if restart:
+        try:
+            shutil.rmtree(str(save_path.resolve()))
+            save_path.mkdir()
+            Path("results.txt").unlink()
+        except:
+            print("Failed to clear files from previous run")
+    else:
+        save_path.mkdir()
 
-    # tweets = TweetGetter().get_standardised_tweets()
-    # X = tweets.tweet
-    # y = tweets.polarity
+    tweets = TweetGetter().get_standardised_tweets()
+    X = tweets.tweet
+    y = tweets.polarity
 
-    # start = timer()
-    # progressive_train(X, y, save_path)
-    # print("Total training time for all sizes: {}s".format(timer()-start))
-    read_dict(Path("results.txt"))
+    start = timer()
+    progressive_train(X, y, save_path)
+    time = timer() - start
+    save_file = Path("results.txt")
+    if save_file.exists():
+        with save_file.open('a') as write_file:
+            write_file.writelines(["Total Time: {}".format(time)])
+    else:
+        with save_file.open('w') as write_file:
+            write_file.writelines(["Total Time: {}".format(time)])
+    print("Added results to {}".format(str(save_file)))
+    print("Total training time for all sizes: {}s".format(timer()-start))
+    # read_dict(Path("results.txt"))
