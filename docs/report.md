@@ -1,7 +1,11 @@
 <md-cover title='Trump Tweet Sentiment Analysis' author='Luke Ireland'></md-cover>
 <md-style name="latex"></md-style>
 
-WC: 2600
+WC: 2700
+
+TODO:
+
+= Development methodology
 
 # Table of Contents <!-- omit in toc -->
 
@@ -92,7 +96,7 @@ TextBlob is a simplified text processing library for Python, and provides a simp
 
 I needed more methods of sentiment analysis, so I decided on Random Forests, [XGBoost](https://www.datacamp.com/community/tutorials/xgboost-in-python)[^9], Logistic Regression and Multilayer Perceptron models to compare to my Naive Bayes classifier.
 
-Naive Bayes classifiers are simple probabilistic classifers which applies Bayes' theorem of naive assumptions between the features. I will be using a Multinomial Naive Bayes classifier, which uses feature vectors in the form of histograms, which count the number of times an event (in this case - sentiment) was observed in a particular instance (in this case - document)[^11].
+Naive Bayes classifiers are simple probabilistic classifers which apply Bayes' theorem of naive assumptions between the features. I will be using a Multinomial Naive Bayes classifier, which uses feature vectors in the form of histograms, which count the number of times an event (in this case - sentiment) was observed in a particular instance (in this case - document)[^11].
 
 ```python
 sentiments = {
@@ -111,7 +115,7 @@ for tweet in tweets:
 return max(sentiments)
 ```
 
-Random Forest classifiers operate by constructing multiple decision trees at training time, and uses the mode of each individual tree's classification of the input vector (in this case - array of sentiments) to decide upon a class. A decision tree is a tree that consists of parent nodes that contain decisions or clauses, and leaf nodes with a classification[^12].
+Random Forest classifiers operate by constructing multiple decision trees at training time, and use the mode of each individual tree's classification of the input vector (in this case - array of sentiments) to decide upon a class. A decision tree is a tree that consists of parent nodes that contain decisions or clauses, and leaf nodes with a classification[^12].
 
 ```python
 for tweet in tweets:
@@ -160,7 +164,6 @@ class DTree:
 
 XGBoost classifier is a gradient boosting algorithm that uses proportional shrinking of leaf nodes, smart tree penalization and differentiation to improve it's understanding of each of the classes used in training. It uses a variety of parameters requiring optimisation to improve accuracy. Gradient boosting algorithms produce prediction models in the form of an ensemble weak prediction model, typically decision trees (similar to random forest). The models are then built in stages, and generalised by allowing optimisation of an arbitrary differentiable loss function, often softmax for multiclass classifiers[^13].
 
-
 ```python
 
 def softmax(tree):
@@ -180,6 +183,7 @@ for tweet in tweets:
 A Multilayer Perceptron is a type of feedforward artificial neural network, consisting of an input layer, a hidden layer and an output layer. Each non-input node is a neuron that uses a nonlinear activation function (to calculate the neuron's output from the input nodes), and uses a supervised learning technique called backpropagation (hence feedforward), similar to the least mean squares algorithm, for training. Backpropagation computes the gradient of the loss function with respect to the weights of the network for a single input–output(tweet-sentiment) example. Learning is performed by changing the connection weights between the layers, based on the amount of error between the class prediction and actual class, calculated through backpropagation[^14].
 
 TODO:
+
 - Add backpropgation calculation or psuedocode
 
 ```python
