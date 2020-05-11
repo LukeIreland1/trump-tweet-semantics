@@ -177,7 +177,10 @@ for tweet in tweets:
     loss = softmax(tree)
 ```
 
-A Multilayer Perceptron is a type of feedforward artificial neural network, consisting of an input layer, a hidden layer and an output layer. Each non-input node is a neuron that uses a nonlinear activation function (to calculate the neuron's output from the input nodes), and uses a supervised learning technique called backpropagation (hence feedforward), similar to the least mean squares algorithm, for training. Backpropagation computes the gradient of the loss function with respect to the weights of the network for a single input–output(tweet-sentiment) example. Learning is performed by changing the connection weights between the layers, based on the amount of error between the prediction and actual class, calculated through backpropagation[^14].
+A Multilayer Perceptron is a type of feedforward artificial neural network, consisting of an input layer, a hidden layer and an output layer. Each non-input node is a neuron that uses a nonlinear activation function (to calculate the neuron's output from the input nodes), and uses a supervised learning technique called backpropagation (hence feedforward), similar to the least mean squares algorithm, for training. Backpropagation computes the gradient of the loss function with respect to the weights of the network for a single input–output(tweet-sentiment) example. Learning is performed by changing the connection weights between the layers, based on the amount of error between the class prediction and actual class, calculated through backpropagation[^14].
+
+TODO:
+- Add backpropgation calculation or psuedocode
 
 ```python
 class MLP:
@@ -226,7 +229,7 @@ class OutputNode(Node):
     for i in range(len(self.children)):
       scores.append(self.children[i].score * self.weights[i])
     self.prediction = mean(scores)
-    self.weights = [loss_func_deriv(score) for score in scores]
+    self.weights = [loss_func_deriv(score) for score in scores] # Add loss funcs and check this makes sense
 ```
 
 Logistic Regression is a classifier model that uses a logistic function to model a dependent variable. It measures the relationship between the categorical dependent variable and one or more independent variables by estamating probabilities using a logistic function, which is the cumulative distribution function of logistic regression.
