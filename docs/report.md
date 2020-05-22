@@ -1,11 +1,7 @@
 <md-cover title='Trump Tweet Sentiment Analysis' author='Luke Ireland'></md-cover>
 <md-style name="latex"></md-style>
 
-WC: 2700
-
-TODO:
-
-= Development methodology
+WC: 4500 ~(PDF output into MS Word - 100)
 
 # Table of Contents <!-- omit in toc -->
 
@@ -14,11 +10,12 @@ TODO:
   - [1.2. Aim](#12-aim)
   - [1.3. Objectives](#13-objectives)
 - [2. Literature Review](#2-literature-review)
-- [3. Data Pre-processing](#3-data-pre-processing)
-  - [3.1 Dataset](#31-dataset)
-  - [3.2 Labelling](#32-labelling)
-- [4. How I compared each Sentiment Classification algorithm to one another](#4-how-i-compared-each-sentiment-classification-algorithm-to-one-another)
-- [5. Evaluation](#5-evaluation)
+- [3. Development Methodology](#3-development-methodology)
+- [4. Data Pre-processing](#4-data-pre-processing)
+  - [4.1 Dataset](#41-dataset)
+  - [4.2 Labelling](#42-labelling)
+- [5. How I compared each Sentiment Classification algorithm to one another](#5-how-i-compared-each-sentiment-classification-algorithm-to-one-another)
+- [6. Evaluation](#6-evaluation)
   - [Results](#results)
     - [Aggregated Statistics](#aggregated-statistics)
     - [By Accuracy (All Tweets)](#by-accuracy-all-tweets)
@@ -34,8 +31,8 @@ TODO:
     - [40432 Tweets (7/8 of total)](#40432-tweets-78-of-total)
     - [46208 Tweets (All Tweets)](#46208-tweets-all-tweets)
     - [Results across size variations](#results-across-size-variations)
-- [6. Conclusion](#6-conclusion)
-- [7. References](#7-references)
+- [7. Conclusion](#7-conclusion)
+- [8. References](#8-references)
 
 # 1. Introduction
 
@@ -96,22 +93,25 @@ TextBlob is a simplified text processing library for Python, and provides a simp
 
 I needed more methods of sentiment analysis, so I decided on Random Forests, [XGBoost](https://www.datacamp.com/community/tutorials/xgboost-in-python)[^9], Logistic Regression and Multilayer Perceptron models to compare to my Naive Bayes classifier.
 
-Naive Bayes classifiers are simple probabilistic classifers which apply Bayes' theorem of naive assumptions between the features. I will be using a Multinomial Naive Bayes classifier, which uses feature vectors in the form of histograms, which count the number of times an event (in this case - sentiment) was observed in a particular instance (in this case - document)[^11].
+Naive Bayes classifiers are simple probabilistic classifers which apply Bayes' theorem of naive assumptions between the features. I will be using a Multinomial Naive Bayes classifier, which uses feature vectors in the form of histograms, which count the number of times an event (in this case - sentiment) was observed in a particular instance (in this case - tweet)[^11].
 
 ```python
 sentiments = {
+  word:{
   "neg":0,
   "neut":0,
   "pos":0
+  } for word in getwords() # Dictionary tracking sentiment history of words, where getwords() gets all words in given document
 }
 for tweet in tweets:
+  sentiment = getlabel(tweet) # where getlabel() is a function that gets the sentiment of the labelled tweet.
   for word in tweet:
-    if sentiment(word) == -1:
-      sentiments["neg"]+=1
-    elif sentiment(word) == 0:
-      sentiments["neut"]+=1
-    elif sentiment(word) == 1:
-      sentiments["pos"]+=1
+    if sentiment == -1:
+      sentiments[word]["neg"]+=1
+    elif sentiment == 0:
+      sentiments[word]["neut"]+=1
+    elif sentiment == 1:
+      sentiments[word]["pos"]+=1
 return max(sentiments)
 ```
 
@@ -182,10 +182,6 @@ for tweet in tweets:
 
 A Multilayer Perceptron is a type of feedforward artificial neural network, consisting of an input layer, a hidden layer and an output layer. Each non-input node is a neuron that uses a nonlinear activation function (to calculate the neuron's output from the input nodes), and uses a supervised learning technique called backpropagation (hence feedforward), similar to the least mean squares algorithm, for training. Backpropagation computes the gradient of the loss function with respect to the weights of the network for a single input–output(tweet-sentiment) example. Learning is performed by changing the connection weights between the layers, based on the amount of error between the class prediction and actual class, calculated through backpropagation[^14].
 
-TODO:
-
-- Add backpropgation calculation or psuedocode
-
 ```python
 class MLP:
   def __init__(self, text):
@@ -218,7 +214,7 @@ class HiddenNode(Node):
     for child in self.children:
       text = child.text
       scores.append(get_sentiment(text) * self.weight)
-    self.loss = loss_func(scores)
+    self.loss = loss_func(scores) # where loss_func is any given loss func, such as least mean squares.
     self.scores = scores
     self.parent.result()
 
@@ -233,23 +229,60 @@ class OutputNode(Node):
     for i in range(len(self.children)):
       scores.append(self.children[i].score * self.weights[i])
     self.prediction = mean(scores)
-    self.weights = [loss_func_deriv(score) for score in scores] # Add loss funcs and check this makes sense
+    self.weights = [loss_func_deriv(score) for score in scores] # Where loss_func_deriv is the inverse of loss_func.
 ```
 
-Logistic Regression is a classifier model that uses a logistic function to model a dependent variable. It measures the relationship between the categorical dependent variable and one or more independent variables by estamating probabilities using a logistic function, which is the cumulative distribution function of logistic regression.
+Logistic Regression is a classifier model that uses a logistic function to model a dependent variable. It measures the relationship between the categorical dependent variable and one or more independent variables by estimating probabilities using a logistic function, which is the cumulative distribution function of logistic regression.
 
-I will specifically be using multinomial logistic regression, as I have 3 classes. The score vector for a given document (tweet) is in the format: scores(X,k) = β<sub>k</sub>\*X, where X is a vector of the words that make up the tweet, and β is a vector of weights corresponding to outcome (sentiment) k. This score vector is then used by the softmax function to calculate a probability of the tweet belonging to that sentiment[^15].
+I will specifically be using multinomial logistic regression, as I have 3 classes. The score vector for a given document (tweet) is in the format: scores(X,k) = β<sub>k</sub>*X, where X is a vector of the words that make up the tweet, and β is a vector of weights corresponding to outcome (sentiment) k. This score vector is then used by the softmax function to calculate a probability of the tweet belonging to that sentiment[^15].
 
-Softmax is simply: e<sup>scores</sup>/sum(scores), where scores is a vector, where each element corresponds to a word and sentiment prediction.
+Softmax is simply: e^<sup>scores</sup>/sum(scores), where scores is a vector, where each element corresponds to a word and sentiment prediction.
+
+```python
+def get_scores(words, weights):
+  neg_weight = weights[0]
+  neut_weight = weights[1]
+  pos_weight = weights[2]
+
+  neg_scores = [get_neg_score(word) for word in words]
+  neut_scores = [get_neut_score(word) for word in words]
+  pos_scores = [get_pos_score(word) for word in words]
+
+  neg_scores = [score * neg_weight for score in neg_words]
+  neut_scores = [score * neut_weight for score in neut_words]
+  pos_scores = [score * pos_weight for score in pos_words]
+
+  return [neg_scores, neut_scores, pos_scores]
+
+def softmax(scores):
+  return math.E**scores/sum(scores)
+
+weights = [1, 1, 1]
+
+for tweet in tweets:
+  probabilities = [softmax(score) for score in get_scores(tweet.split(), weights)]
+  prediction = probabilities.index(max(probabilities))
+  weights[prediction] *= 1.1
+  for i in range(len(weights)):
+    if i != prediction:
+      weights[i] *= 0.9
+  return prediction - 1
+```
 
 Stochastic Gradient Descent is an iterative method for optimizing an objective function with suitable smoothness properties.
 The objective function (loss relative to actual sentiment) to be minimised is:
 
 !["SGD Equation"](images/sgd.svg "SGD Equation")
 
-where the parameter w (sentiment polarity) is to be estimated. Each summand function Q<sub>i</sub> is typically associated with the i-th observation (i-th word) in the data set (tweet) of length n[^16]. This means this algorithm will estimate all 3 sentiment polarities (postive, neutral, negative) and classify that tweet as the estimation with the lowest loss value.
+where the parameter w (sentiment polarity) is to be estimated. Each summand function Q<sub>i</sub> is typically associated with the i-th observation (i-th word) in the data set (tweet) of length n[^16]. The algorithm works as follows:
 
-Due to their simple effectiveness, I assume Naive Bayes, Random Forest, and Logistic Regression will perform the best to begin with, certainly in terms of speed, but with tweaking, Multilayer Perceptron and XGB should provide comparable or better accuracy.
+1. Choose an initial vector of sentiments w, and learning rate r.
+2. Repeat until an appropriate minimum is obtained:
+   1. Randomly shuffle examples in the training set
+   2. For i in range(n):
+      1. w = w - r*loss(w)
+
+Due to their simple effectiveness, I predict Naive Bayes, Random Forest, and Logistic Regression will perform the best to begin with, certainly in terms of speed, but with tweaking, Multilayer Perceptron and XGB should provide comparable or better accuracy.
 
 After coming across this article on [algorithm comparison](https://medium.com/towards-artificial-intelligence/text-classification-by-xgboost-others-a-case-study-using-bbc-news-articles-5d88e94a9f8)[^16], I found that creating a tf-idf transformer to use on the initial bag of words model, prior to training, massively boosts accuracy.
 
@@ -259,19 +292,19 @@ The function that would be used to evaluate the pipelines: `cross_val_score`, ga
 
 For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^18], which I found from [this](https://medium.com/@mc7968/whatwouldtrumptweet-topic-clustering-and-tweet-generation-from-donald-trumps-tweets-b191fccaffb2)[^19] article attempting the same thing. Markovify is a Python library that uses Markov chains to generate text based on an input corpora. The article listed multiple approaches, including using a Keras API and k-means clustering to build a Machine Learning model to feed into tweet generators, but that added a significant layer of obscurity, and made less coherent tweets.
 
-# 3. Data Pre-processing
+# 3. Development Methodology
 
-## 3.1 Dataset
+Due to developing alone, and most of the work I did being completed quite quickly, I decided to go for an Agile approach, with sprints lasting a month. I would make clear targets at the beginning of the sprint and make sure they're done by the end of the sprint. This was pretty successful and I feel like I got a lot done by making feasible targets and commiting to making them.
 
-TODO:
+# 4. Data Pre-processing
 
-- Add wordcloud before and after cleaning
+## 4.1 Dataset
 
 The dataset I extracted from Trump Twitter Archive, was last updated 5th March 2020 and contains 46208 tweets.
 
 I used NLTK to look at the most common words and phrases of different lengths, to explore the dataset.
 
-Here is a word cloud I created using the Python library wordcloud, **without** tweet cleaning.
+Here is a word cloud I created using my custom `TweetCloud` class that uses Python library wordcloud, but adds important features for NLP abstraction, **without** tweet cleaning.
 
 ![Figure 2](images/wordcloud4.png "Figure 2")
 _Figure 2_ - WordCloud of phrases of length 4.
@@ -294,7 +327,7 @@ If the V.P. of the American people care about Hunter Biden brought to the euphor
 China wants Sleepy Joe Biden, on the other hand, take out millions of American…
 ```
 
-## 3.2 Labelling
+## 4.2 Labelling
 
 I used Python's JSON library to load the tweets.json file into the program as a dictionary, implemented in Python as a dict. The dict contained lots of useful information, but I was actually only interested in the tweets themselves, so I extracted them, cleaned them up by removing anything that wasn't a word (URLs mostly, numbers, symbols). These cleaned tweets then needed to be labelled, so I created my own classifier due the size of the data, rather than labelling 46208 tweets myself.
 
@@ -322,7 +355,11 @@ pandas is a Python library for data analysis and manipulation, and provides a Da
 
 I decided to standardise my scores using the z-score method of `new score = (raw_score - mean)/standard deviation`, where raw score is the original score for a given tweet calculated by my classifier. All scores are calculated by my classifier, then a mean and standard deviation for all tweets are collected to calculate the z-score for each tweet.
 
-# 4. How I compared each Sentiment Classification algorithm to one another
+# 5. How I compared each Sentiment Classification algorithm to one another
+
+TODO:
+
+1. Show some of my code.
 
 I originally intended to implement the algorithms themselves, but came across Scikit-Learn's pipelines, which gave very easily reproducible and fair ways of running classification algorithms, which was immensely useful to me trying to compare these algorithms. I could have used these pipelines with my own implementations, but that would then require the further diversion of learning how to make it compatible, plus their implementations will have been well tested and scrutinised. I instead opted to go along with their implementation which slot into their pipelines very nicely. Pipelines contain function calls as steps, which are used on the input data, through the pipeline training function provided by Scikit-Learn: `cross_val_score`.
 
@@ -348,7 +385,7 @@ The data lengths used were 1/8, 1/4, 3/8, 1/2, 5/8, 3/4, 7/8, 1/1 of the total 4
 
 These dictionaries were passed to an export function that saved the results to a text file, and created a combined graph. I also created an import function if I wished to alter the graph, without running the ~3 hour long program again.
 
-# 5. Evaluation
+# 6. Evaluation
 
 In this chapter, I will evaluate the comparisons using their accuracy and time.
 
@@ -377,6 +414,7 @@ The accuracy, precision and recall's mean and standard deviation are all quite s
 | XGBoost                     | 0.716    | 0.715     | 0.716  | 0.336    |
 | Naive Bayes                 | 0.714    | 0.678     | 0.714  | 0.21     |
 | Stochastic Gradient Descent | 0.674    | 0.681     | 0.674  | 0.203    |
+
 <caption>Table 1</caption>
 
 Logistic Regression was the most accurate algorithm by a fair margin, and was significantly faster than the closest competition.
@@ -391,6 +429,7 @@ Logistic Regression was the most accurate algorithm by a fair margin, and was si
 | XGBoost                     | 0.716    | 0.715     | 0.716  | 0.336    |
 | Stochastic Gradient Descent | 0.674    | 0.681     | 0.674  | 0.203    |
 | Naive Bayes                 | 0.714    | 0.678     | 0.714  | 0.21     |
+
 <caption>Table 2</caption>
 
 Multilayer Perceptron was the most precise, but only by 0.001 more than Logistic Regression.
@@ -405,11 +444,12 @@ Multilayer Perceptron was the most precise, but only by 0.001 more than Logistic
 | Naive Bayes                 | 0.714    | 0.678     | 0.714  | 0.21     |
 | XGBoost                     | 0.716    | 0.715     | 0.716  | 0.336    |
 | Random Forest               | 0.76     | 0.765     | 0.76   | 0.927    |
+
 <caption>Table 3</caption>
 
 Logistic Regression was the fastest, closley followed by SGD and Multilayer Perceptron.
 
-### (Initial) Graph (Score against Time)
+### Initial Graph (Score against Time)
 
 ![Figure 3](images/size46208.svg "Figure 3")
 _Figure 3_
@@ -467,11 +507,11 @@ _Combined Results_
 
 Overall, the relative positions of each algorithm with respect to each other stayed about the same, but there is some definite movement for some algorithms, meaning some algorithms perform better in comparison for smaller or larger datasets.
 
-# 6. Conclusion
+# 7. Conclusion
 
 If I had more time, I would have tweaked all algorithms, using all available parameters and exhausting all possible combinations of parameters, to provide the highest accuracy.
 
-# 7. References
+# 8. References
 
 [^1]: https://github.com/ckoepp/TwitterSearch
 [^2]: http://www.trumptwitterarchive.com/archive

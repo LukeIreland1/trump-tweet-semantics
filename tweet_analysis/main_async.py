@@ -44,6 +44,7 @@ Tweets: {}
 
 COLOURS = ['r', 'g', 'b', 'c', 'y', 'm']
 
+
 def save_graph_individual(algorithms, size):
     save_file = Path("graphs/size{}.svg".format(size))
     for algorithm in algorithms:
@@ -67,6 +68,7 @@ def save_graph_individual(algorithms, size):
                 bbox_inches='tight')
     plt.clf()
 
+
 def get_colour(colours, name):
     for colour, value in colours.items():
         if value == name:
@@ -75,9 +77,10 @@ def get_colour(colours, name):
             colours[colour] = name
             return colour
 
+
 def read_dict(f):
     results = []
-    colours = {colour:"" for colour in COLOURS}
+    colours = {colour: "" for colour in COLOURS}
     length_dict = dict()
     with f.open() as read_file:
         lines = read_file.read()
