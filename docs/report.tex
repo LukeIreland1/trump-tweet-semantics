@@ -52,11 +52,12 @@ Natural Language Processing is the subfield of linguistics and computer science 
 Sentiment Analysis is a form of NLP.
 
 Example analysis methods include:
-
-- Frequency Distribution
-- Word Clouds
-- Sentiment Analysis
-- Tweet Generation
+\begin{itemize}
+	\item Frequency Distribution
+	\item Word Clouds
+	\item Sentiment Analysis
+	\item Tweet Generation
+\end{itemize}
 
 Frequency Distribution is another form of NLP that looks at the frequency of words and phrases within a given corpus.
 It is useful to be able to remove stopwords (words that don't have any sentiment) from a corpus, and to highlight which words are more important in deciding the general sentiment of a given corpus, or the specific sentiment of a given sentence or subsubsection.
@@ -85,21 +86,16 @@ I will also be evaluating the performance of sentiment analysis algorithms on th
 
 \subsection{Objectives}
 
-1.
-Perform frequency distribution on variable length phrases.
-2.
-Render word clouds of phrases.
-3.
-Analyse whole tweets for sentiment.
-4.
-Create unbiased classifer to initally label dataset
-5.
-Find sentiment classifer algorithms
-6.
-Compare classification algorithms to see which is the most accurate, most precise, yields the highest recall score, and the fastest.
-7.
-Create tweets using data from Trump's Twitter account.
-
+\begin{itemize}
+	\item Perform frequency distribution on variable length phrases.
+	\item Render word clouds of phrases.
+	\item Analyse whole tweets for sentiment.
+	\item Create unbiased classifer to initally label dataset.
+	\item Find sentiment classifer algorithms.
+	\item Compare classification algorithms to see which is the most accurate, most precise, yields the highest recall score, and the fastest.
+	\item Create tweets using data from Trump's Twitter account.
+\end{itemize}
+	
 \newpage
 \section{Literature Review}
 
@@ -110,17 +106,17 @@ I instead opted for someone else's collected tweets at Trump Twitter Archive \au
 The export format wasn't great, as you had to wait a while for the page to compile all the tweets into the correct format (when it would be useful to have it precompiled) and the page doesn't actually give you a JSON file, just a text field with text in JSON format, that you have to slowly copy and paste into a file and use programs to format the JSON into readable format.
 This wasn't ideal, but was the best option available to me.
 
-I saw guides such as Basic Binary Sentiment Analysis using NLTK, Text Classification using NLTK and Creating a Twitter Sentiment Analysis program using NLTK's Naive Bayes Classifier using NLTK's (Natural Language Toolkit - A Python library for NLP) Naive Bayes Classifier, but they used pre-processed data meaning I could't use them for my tweets, as that would mean using an classifier trained on film reviews, on tweets, specifically do.
-This guide used Google's Natural Language API to perform Sentiment Analysis, but this method required constant communication with Google's Cloud server, so was fairly slow overall.
+I saw guides such as Basic Binary Sentiment Analysis using NLTK\autocite[3]{munir_2019}, Text Classification using NLTK\autocite[3]{python_tutorial} and Creating a Twitter Sentiment Analysis program using NLTK's Naive Bayes Classifier\autocite[3]{al-masri_2019} using NLTK's (Natural Language Toolkit - A Python library for NLP) Naive Bayes Classifier, but they used pre-processed data meaning I could't use them for my tweets, as that would mean using an classifier trained on film reviews, on tweets, specifically do.
+This guide\autocite[3]{putra_2019} used Google's Natural Language API to perform Sentiment Analysis, but this method required constant communication with Google's Cloud server, so was fairly slow overall.
 
-Eventually, I fell upon this article which used TextBlob to perform sentiment analysis instead.
+Eventually, I fell upon this article\autocite[3]{geeksforgeeks_2020} which used TextBlob to perform sentiment analysis instead.
 TextBlob is a simplified text processing library for Python, and provides a simple API for performing Natural Language Processing tasks, such as speech tagging, noun extraction, various forms of classification, translation and, most importantly, sentiment analysis.
 I used TextBlob briefly to get an understanding on how I could label tweets in preparation for the SAA comparisons.
 
-I needed more methods of sentiment analysis, so I decided on Random Forests, XGBoost, Logistic Regression and Multilayer Perceptron models to compare to the Naive Bayes classifier.
+I needed more methods of sentiment analysis, so I decided on Random Forests, XGBoost\autocite[4]{xgboost_tutorial}, Logistic Regression and Multilayer Perceptron models to compare to the Naive Bayes classifier.
 
 Naive Bayes classifiers are simple probabilistic classifers which apply Bayes' theorem of naive assumptions between the features.
-I will be using a Multinomial Naive Bayes classifier, which uses feature vectors in the form of histograms, which count the number of times an event (in this case - sentiment) was observed in a particular instance (in this case - tweet).
+I will be using a Multinomial Naive Bayes classifier, which uses feature vectors in the form of histograms, which count the number of times an event (in this case - sentiment) was observed in a particular instance (in this case - tweet)\autocite[4]{nbc}.
 
 \begin{lstlisting}[caption={Multinomial Naive Bayes classifier psuedopythoncode},captionpos=b]
 sentiments = {
@@ -144,7 +140,7 @@ for tweet in tweets:
 \end{lstlisting}
 
 Random Forest classifiers operate by constructing multiple decision trees at training time, and use the mode of each individual tree's classification of the input vector (in this case - array of sentiments) to decide upon a class.
-A decision tree is a tree that consists of parent nodes that contain decisions or clauses, and leaf nodes with a classification.
+A decision tree is a tree that consists of parent nodes that contain decisions or clauses, and leaf nodes with a classification\autocite[4]{rf}.
 
 \begin{lstlisting}[caption={Random Forest classifier psuedopythoncode},captionpos=b]
 for tweet in tweets:
@@ -194,7 +190,7 @@ class DTree:
 XGBoost classifier is a gradient boosting algorithm that uses proportional shrinking of leaf nodes, smart tree penalization and differentiation to improve it's understanding of each of the classes used in training.
 It uses a variety of parameters requiring optimisation to improve accuracy.
 Gradient boosting algorithms produce prediction models in the form of an ensemble weak prediction model, typically decision trees (similar to random forest).
-The models are then built in stages, and generalised by allowing optimisation of an arbitrary differentiable loss function, often softmax for multiclass classifiers.
+The models are then built in stages, and generalised by allowing optimisation of an arbitrary differentiable loss function, often softmax for multiclass classifiers\autocite[5]{xgboost}.
 
 \begin{lstlisting}[caption={XGBoost classifier psuedopythoncode},captionpos=b]
 def softmax(tree):
@@ -214,7 +210,7 @@ for tweet in tweets:
 A Multilayer Perceptron is a type of feedforward artificial neural network, consisting of an input layer, a hidden layer and an output layer.
 Each non-input node is a neuron that uses a nonlinear activation function (to calculate the neuron's output from the input nodes), and uses a supervised learning technique called backpropagation (hence feedforward), similar to the least mean squares algorithm, for training.
 Backpropagation computes the gradient of the loss function with respect to the weights of the network for a single input–output(tweet-sentiment) example.
-Learning is performed by changing the connection weights between the layers, based on the amount of error between the class prediction and actual class, calculated through backpropagation.
+Learning is performed by changing the connection weights between the layers, based on the amount of error between the class prediction and actual class, calculated through backpropagation\autocite[6]{mp}.
 
 \begin{lstlisting}[caption={Multilayer Perceptron classifier psuedopythoncode},captionpos=b]
 class MLP:
@@ -280,7 +276,7 @@ The score vector for a given document (tweet) is in the format
 \end{figure}
 
 where $X$ is a vector of the words that make up the tweet, and $\beta$ is a vector of weights corresponding to outcome (sentiment) $k$.
-This score vector is then used by the softmax function to calculate a probability of the tweet belonging to that sentiment.
+This score vector is then used by the softmax function to calculate a probability of the tweet belonging to that sentiment\autocite[8]{lr}.
 
 Softmax is simply: $\frac{e^{scores}}{sum(scores)}$, where scores is a vector, where each element corresponds to a word and sentiment prediction.
 
@@ -326,7 +322,7 @@ The objective function (loss relative to actual sentiment) to be minimised is:
 \end{figure}
 
 where the parameter w (sentiment polarity) is to be estimated.
-Each summand function Q<sub>i</sub> is typically associated with the i-th observation (i-th word) in the data set (tweet) of length n.
+Each summand function Q<sub>i</sub> is typically associated with the i-th observation (i-th word) in the data set (tweet) of length n\autocite[9]{sgd}.
 The algorithm works as follows:
 
 1.
@@ -342,18 +338,17 @@ $w = w - r*loss(w)$
 
 Due to their simple effectiveness, I predict Naive Bayes, Random Forest, and Logistic Regression will perform the best to begin with, certainly in terms of speed, but with tweaking, Multilayer Perceptron and XGB should provide comparable or better accuracy.
 
-After coming across this article on algorithm comparisons, I found that creating a tf-idf transformer to use on the initial bag of words model, prior to training, massively boosts accuracy.
-
-When implementing my models, I discovered that the fairest, most reproducible method of comparison was using Scikit Learn's Pipelines, and began altering my code to minimise the difference between how classifiers are ran, to isolate the performance of the classifier down to the algorithm itself and not any pre-processing.
+After coming across this article\autocite[9]{nag_2019} on algorithm comparisons, I found that creating a tf-idf transformer to use on the initial bag of words model, prior to training, massively boosts accuracy.
+The article also demonstrates a fair, reproducible method of algorithm comparison, using Scikit Learn's Pipelines, so I began altering my code to minimise the difference between how classifiers are ran, to isolate the performance of the classifier down to the algorithm itself and not any slight differences in pre-processing.
 Scikit Learn is another Python NLP library that builds on the NLP available in NLTK.
 Pipelines are flexible data types that contain steps which define how a particular algorithm should be prepared, and then trained.
 
-The function that would be used to evaluate the pipelines: \lstinline{cross_val_score}, gave a \lstinline{scoring} parameter with many options, I chose accuracy score, which simply compares prediction labels with actual labels, but there were a range of alternatives available, such as average precision, balanced accuracy score, Brier score, F1 score and Normalized Discounted Cumulative Gain.
+The function that would be used to evaluate the pipelines: \lstinline{cross_val_score}, gave a \lstinline{scoring} parameter with many options\autocite[5]{scikit}, I chose accuracy score, which simply compares prediction labels with actual labels, but there were a range of alternatives available, such as average precision, balanced accuracy score, Brier score, F1 score and Normalized Discounted Cumulative Gain.
 I later went back to this and decided to add multiple metrics, so I had to instead use \lstinline{cross_validate} and chose Precision score, and Recall score.
 These two score types required an averaging function to be set, with the options being: Micro - Perform the scoring function, but don't average; Macro - Perform the scoring function, then find the unweighted mean; Weighted - Perform the scoring function, then find the weighted mean.
 Weighted was the only scoring function that accounted for label imbalance, so as I already had accuracy as a metric, I thought weighted made the most sense.
 
-For tweet generation, I used Markovify, which I found from this article attempting the same thing.
+For tweet generation, I used Markovify\autocite[9]{jsvine_2020}, which I found from this article\autocite[9]{hall_2017} attempting the same thing.
 Markovify is a Python library that uses Markov chains to generate text based on an input corpora.
 The article listed multiple approaches, including using a Keras API and k-means clustering to build a Machine Learning model to feed into tweet generators, but that added a significant layer of obscurity, and made less coherent tweets.
 
@@ -386,7 +381,7 @@ The dataset I extracted from Trump Twitter Archive, was last updated 5th March 2
 
 I used NLTK to look at the most common words and phrases of different lengths, to explore the dataset.
 
-Here is a word cloud I created using my custom \lstinline{TweetCloud} class that uses Python library wordcloud, but adds important features for NLP abstraction, **without** tweet cleaning.
+Here is a word cloud I created using my custom \lstinline{TweetCloud} class that uses Python library wordcloud, but adds important features for NLP abstraction, \textbf{without} tweet cleaning.
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{images/wordcloud4.png}
@@ -422,13 +417,13 @@ These cleaned tweets then needed to be labelled, so I created my own classifier 
 My classifier tokenised the cleaned tweets, then applied lemmatisation on the tokens, which is an advanced form of stemming.
 Stemming is the process of reducing inflections or derivations to their base form.
 Tokenisation is another type of cleaning which throws away any useless (relative to NLP) information from a given input and lemmatisation looks at the context of each word in the given text, unlike stemming, then reduces all forms/inflections of a word into its base form, based on that context.
-This base form is then compatible with WordNet which is a lexical database created by psychology professor George Armitage Miller of Princeton University, that groups words into cognitive synonyms or synsets.
+This base form is then compatible with WordNet which is a lexical database created by psychology professor George Armitage Miller of Princeton University, that groups words into cognitive synonyms or synsets\autocite[14]{wn}.
 
-Synsets are grouped data elements considered semantically equivalent for information retrieval purposes.
+Synsets are grouped data elements considered semantically equivalent for information retrieval purposes\autocite[14]{sr}.
 
 These base forms can be further processed, by tagging them with the appropriate usage, meaning the most accurate synset can be retrieved.
 This synset is then used by SentiWordNet to retrieve a sentiment score.
-SentiWordNet is a lexical resource used for opinion mining created by Andrea Esuli of the Institute of the National Research Council of Italy.
+SentiWordNet is a lexical resource used for opinion mining created by Andrea Esuli of the Institute of the National Research Council of Italy\autocite[14]{esuli}.
 
 These sentiment scores for each individual word in a tweet, are used to build an aggregate score for the tweet, and negation is used when words were used next to modfiers like "not" and "no".
 There are more possible modifers, such as "very", "hardly", "extremely", "barely" or "never" - "It's never a good idea to...", but these are more complex modfiers than the ones I implemented and were fairly out of scope, given my project is more to do with comparing existing algorithms, than making a perfect one myself.
@@ -451,7 +446,7 @@ I evaluated my classifier's labelling accuracy based on my own interpretation of
 pandas is a Python library for data analysis and manipulation, and provides a DataFrame class, which is very useful for organising data, and is compatible with most NLP libraries in Python.
 
 I decided to standardise my scores using the z-score method of $new score = \frac{raw score - mean}{standard deviation}$, where raw score is the original score for a given tweet calculated by my classifier.
-All scores are calculated by my classifier, then a mean and standard deviation for all tweets are collected to calculate the z-score for each tweet.
+All scores are calculated by my classifier, then a mean and standard deviation for all tweets are collected to calculate the z-score for each tweet\autocite[15]{cross_validation}.
 
 \newpage
 \section{How I compared each Sentiment Classification algorithm to one another}
@@ -488,13 +483,13 @@ A graph is created to compare accuracy against time using \lstinline{matplotlib.
 I later decided I wanted to train on various sizes of tweets, and use more than one metric, so I switched to \lstinline{cross_validate} from Scikit-Learn and used \lstinline{multiprocessing}.
 \lstinline{cross_validate} is identical to \lstinline{cross_val_score}, but allows for multiple metrics.
 \lstinline{multiprocessing} uses multiple processes, instead of threads, which in this case, resulted in better performance.
-Upon returning to this to measure how much faster this improvement, I found a further improvement in Ray's multiprocessing library.
-Ray is a Python library focusing on distributed and parallel processing.
-Ultimately, I decided to compare the serial case to both Python's and Ray's multiprocessing libraries.
-Developing on AArch64, meant that I had to build Ray myself, which introduced many problems, and I decided to abandon this as I couldn't successfully build it.
+Upon returning to this to measure how much faster this improvement, I found a further improvement in Ray's multiprocessing library\autocite[17]{nishihara_2020}.
+Ray is a Python library focusing on distributed and parallel processing\autocite[17]{ray-project_2020}.
+Originally, I had decided to compare the serial case to both Python's and Ray's multiprocessing libraries.
+Developing on AArch64, meant that I had to build Ray myself, which introduced many problems, and I ultimately decided to abandon this as I couldn't successfully build it.
 
 The parallel version took 2.79 hours, and the serial version took 4.18 hours.
-This is an improvement of around 150%.
+This is an improvement of around 150\%.
 
 The training time per "step" (a given data length) was improved, but it wasn't by a huge amount.
 I added \lstinline{accuracy}, \lstinline{precision_weighted} and \lstinline{recall_weighted} to the \lstinline{scoring} array passed to \lstinline{cross_validate} which returned results for each metric, as well as a \lstinline{score_time} passed this information through tuples to create an \lstinline{Algorithm} class, with attributes \lstinline{name}, \lstinline{accuracy}, \lstinline{precision}, \lstinline{recall} and \lstinline{time}.
@@ -514,81 +509,81 @@ Pre-labelling is handled by \lstinline{utils/lukifier.py} which mainly revolves 
 \lstinline{swn_polarity} uses WordNet tags to get the right synset from sentiwordnet and extract the corresponding sentiment score.
 I added a very small example of negation, but this is a naive classifier, and can't handle overly complex English sentences, which is fine, due to general prose used for tweets, and Donald Trump's in particular.
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Lukifier's sentiment labelling function},captionpos=b]
 def swn_polarity(self):
-"""
-Return a sentiment polarity: -1 = negative, 0 = neutral, 1 = positive
-"""
+	"""
+	Return a sentiment polarity: -1 = negative, 0 = neutral, 1 = positive
+	"""
 
-sentiment = 0.0
-tokens_count = 0
+	sentiment = 0.0
+	tokens_count = 0
 
-raw_sentences = sent_tokenize(self.text)
-for raw_sentence in raw_sentences:
-tagged_sentence = pos_tag(word_tokenize(raw_sentence))
+	raw_sentences = sent_tokenize(self.text)
+	for raw_sentence in raw_sentences:
+		tagged_sentence = pos_tag(word_tokenize(raw_sentence))
 
-negated = False
-for word, tag in tagged_sentence:
-self.tag = tag
+		negated = False
+		for word, tag in tagged_sentence:
+			self.tag = tag
 
-if word.endswith("n't") or word == "not":
-negated = True
+			if word.endswith("n't") or word == "not":
+				negated = True
 
-if len(word) <= 2:
-continue
+			if len(word) <= 2:
+				continue
 
-wn_tag = self.penn_to_wn()
+			wn_tag = self.penn_to_wn()
 
-if wn_tag:
-lemma = lemmatizer.lemmatize(word, pos=wn_tag)
-else:
-continue
+			if wn_tag:
+				lemma = lemmatizer.lemmatize(word, pos=wn_tag)
+			else:
+				continue
 
-if not lemma:
-continue
+			if not lemma:
+				continue
 
-synsets = wn.synsets(word, pos=wn_tag)
-if not synsets:
-synsets = wn.synsets(word)
-if not synsets:
-continue
+			synsets = wn.synsets(word, pos=wn_tag)
+			if not synsets:
+				synsets = wn.synsets(word)
+			if not synsets:
+				continue
 
-# Take the first sense, the most common
-synset = synsets[0]
-swn_synset = swn.senti_synset(synset.name())
+			# Take the first sense, the most common
+			synset = synsets[0]
+			swn_synset = swn.senti_synset(synset.name())
 
-pos_score = swn_synset.pos_score()
-neg_score = swn_synset.neg_score()
+			pos_score = swn_synset.pos_score()
+			neg_score = swn_synset.neg_score()
 
-if negated:
-pos_score = pos_score*-1
-neg_score = neg_score*-1
+			if negated:
+				pos_score = pos_score*-1
+				neg_score = neg_score*-1
 
-if neg_score == pos_score:
-pos_score = 0
+			if neg_score == pos_score:
+				pos_score = 0
 
-diff = pos_score - neg_score
-self.words.append((word, diff))
+			diff = pos_score - neg_score
+			self.words.append((word, diff))
 
-sentiment += diff
-tokens_count += 1
+			sentiment += diff
+			tokens_count += 1
 
-# judgment call ? Default to positive or negative
-if not tokens_count:
-return 0
+	# judgment call ? Default to positive or negative
+	if not tokens_count:
+		return 0
 
-self.score = sentiment
+	self.score = sentiment
 
-# positive sentiment
-if sentiment >= 0.125:
-return 1
+	# positive sentiment
+	if sentiment >= 0.125:
+		return 1
 
-# negative sentiment
-elif sentiment <= -0.125:
-return -1
+	# negative sentiment
+	elif sentiment <= -0.125:
+		return -1
 
-# neutral sentiment
-return 0
+	# neutral sentiment
+	return 0
 \end{lstlisting}
 
 As you can see, the function takes any block of text and finds the sentiment score for each word within that text, using lemmas, negations and tags to correctly and fairly identify usages of words.
@@ -598,48 +593,48 @@ Pre-processing is handled by \lstinline{utils/tweet_getter.py} which reads the \
 It can return uncleaned tweets, cleaned tweets, and cleaned labelled tweets; both standardised and non-standardised.
 The classifiers to be compared are obviously interested in the latter.
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Tweet Cleaner \& Feature and Label setup},captionpos=b]
 def get_clean_tweets_with_scores(self):
-if not self.tweets_with_scores:
-print("Getting scores")
-if not self.cleaned_tweets:
-self.cleaned_tweets = self.get_clean_tweets()
-data = {
-'tweet': [],
-'score': [],
-'polarity': []
-}
-for tweet in self.cleaned_tweets:
-classifier = Lukifier(tweet)
-data['tweet'].append(tweet)
-data['score'].append(classifier.score)
-data['polarity'].append(classifier.polarity)
-self.tweets_with_scores = pd.DataFrame(data)
-print("Got {} scores".format(len(self.cleaned_tweets)))
-return self.tweets_with_scores
+	if not self.tweets_with_scores:
+		print("Getting scores")
+		if not self.cleaned_tweets:
+			self.cleaned_tweets = self.get_clean_tweets()
+		data = {
+			'tweet': [],
+			'score': [],
+			'polarity': []
+		}
+		for tweet in self.cleaned_tweets:
+			classifier = Lukifier(tweet)
+			data['tweet'].append(tweet)
+			data['score'].append(classifier.score)
+			data['polarity'].append(classifier.polarity)
+		self.tweets_with_scores = pd.DataFrame(data)
+	print("Got {} scores".format(len(self.cleaned_tweets)))
+	return self.tweets_with_scores
 
 def standardise(self, x, std, mean):
-return (x-mean)/std
+	return (x-mean)/std
 
 def classify(self, sentiment):
-if sentiment >= 0.125:
-return 1
+	if sentiment >= 0.125:
+		return 1
 
-elif sentiment <= -0.125:
-return -1
+	elif sentiment <= -0.125:
+		return -1
 
-return 0
+	return 0
 
 def get_standardised_tweets(self):
-if not self.tweets_with_scores:
-self.get_clean_tweets_with_scores()
-std = self.tweets_with_scores.score.std()
-mean = self.tweets_with_scores.score.mean()
-self.tweets_with_scores.score = [self.standardise(
-x, std, mean) for x in self.tweets_with_scores.score]
-self.tweets_with_scores.polarity = [
-self.classify(x) for x in self.tweets_with_scores.score]
-return self.tweets_with_scores
+	if not self.tweets_with_scores:
+		self.get_clean_tweets_with_scores()
+	std = self.tweets_with_scores.score.std()
+	mean = self.tweets_with_scores.score.mean()
+	self.tweets_with_scores.score = [self.standardise(
+		x, std, mean) for x in self.tweets_with_scores.score]
+	self.tweets_with_scores.polarity = [
+		self.classify(x) for x in self.tweets_with_scores.score]
+	return self.tweets_with_scores
 \end{lstlisting}
 
 As you can see, the \lstinline{standardise()} function is called on all labelled tweets, to adjust their corresponding sentiment score using the z-score method.
@@ -649,59 +644,59 @@ The data returned from \lstinline{utils/tweet_getter.py} is used in the main fil
 The main function gives you an initial option to restart training, or continue from where the program last terminated.
 The program then gets the labelled tweets and calls \lstinline{progressive_train} using the tweets and corresponding sentiments.
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Progressive Training function},captionpos=b]
 def progressive_train(X, y, save_path):
-results = []
+    results = []
 
-orig_size = len(X)
-sizes = [i*0.125 for i in range(1, 9)]
-lengths = [int(size*orig_size) for size in sizes]
+    orig_size = len(X)
+    sizes = [i*0.125 for i in range(1, 9)]
+    lengths = [int(size*orig_size) for size in sizes]
 
-print("Training on tweets of sizes: {}".format(lengths))
-print("Original size is: {}".format(orig_size))
+    print("Training on tweets of sizes: {}".format(lengths))
+    print("Original size is: {}".format(orig_size))
 
-for length in lengths:
-X_train, y_train = get_slice(X, y, length)
-print(length, len(X), len(X_train), len(y_train))
-if length in lengths:
-algorithms = train(X_train, y_train, save_path, length)
-if algorithms:
-if not results:
-results = algorithms
-for result in results:
-result.time = [result.time]
-result.accuracy = [result.accuracy]
-result.precision = [result.precision]
-result.recall = [result.recall]
-else:
-for i in range(len(results)):
-results[i].time.append(algorithms[i].time)
-results[i].accuracy.append(algorithms[i].accuracy)
-results[i].precision.append(algorithms[i].precision)
-results[i].recall.append(algorithms[i].recall)
+    for length in lengths:
+        X_train, y_train = get_slice(X, y, length)
+        print(length, len(X), len(X_train), len(y_train))
+        if length in lengths:
+            algorithms = train(X_train, y_train, save_path, length)
+            if algorithms:
+                if not results:
+                    results = algorithms
+                    for result in results:
+                        result.time = [result.time]
+                        result.accuracy = [result.accuracy]
+                        result.precision = [result.precision]
+                        result.recall = [result.recall]
+                else:
+                    for i in range(len(results)):
+                        results[i].time.append(algorithms[i].time)
+                        results[i].accuracy.append(algorithms[i].accuracy)
+                        results[i].precision.append(algorithms[i].precision)
+                        results[i].recall.append(algorithms[i].recall)
 
-time_string = time.strftime("%H:%M:%S", time.localtime())
-print("Training for size {} finished at {}".format(length, time_string))
+        time_string = time.strftime("%H:%M:%S", time.localtime())
+        print("Training for size {} finished at {}".format(length, time_string))
 
-plt.autoscale(True)
-for algorithm in algorithms:
-print(algorithm)
-plt.plot(algorithm.accuracy, algorithm.time, "{}o".format(
-algorithm.colour), label="{} (Accuracy)".format(algorithm.name))
-plt.plot(algorithm.precision, algorithm.time, "{}v".format(
-algorithm.colour), label="{} (Precision)".format(algorithm.name))
-plt.plot(algorithm.recall, algorithm.time, "{}s".format(
-algorithm.colour), label="{} (Recall)".format(algorithm.name))
+    plt.autoscale(True)
+    for algorithm in algorithms:
+        print(algorithm)
+        plt.plot(algorithm.accuracy, algorithm.time, "{}o".format(
+            algorithm.colour), label="{} (Accuracy)".format(algorithm.name))
+        plt.plot(algorithm.precision, algorithm.time, "{}v".format(
+            algorithm.colour), label="{} (Precision)".format(algorithm.name))
+        plt.plot(algorithm.recall, algorithm.time, "{}s".format(
+            algorithm.colour), label="{} (Recall)".format(algorithm.name))
 
-plt.xlabel("Score")
-plt.ylabel("Time (s)")
-lg = plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
-save_file = Path("graphs/combined.svg")
-plt.savefig(str(save_file),
-dpi=300,
-format='svg',
-bbox_extra_artists=(lg,),
-bbox_inches='tight')
+    plt.xlabel("Score")
+    plt.ylabel("Time (s)")
+    lg = plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+    save_file = Path("graphs/combined.svg")
+    plt.savefig(str(save_file),
+                dpi=300,
+                format='svg',
+                bbox_extra_artists=(lg,),
+                bbox_inches='tight')
 \end{lstlisting}
 
 \lstinline{progressive_train()} is an optional setup function allowing a user to use the main \lstinline{train()} function on varying sizes of tweets.
@@ -711,99 +706,99 @@ bbox_inches='tight')
 The mean and standard deviation for each of these scores is also calculated, then all data produced is saved to a file using \lstinline{save_dict()} and a template \lstinline{TEMPLATE}.
 A graph for an invididual run of \lstinline{train()} is also produced using \lstinline{save_graph_individual()}.
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Main training/comparison function},captionpos=b]
 def train(X, y, save_path, length):
-size = len(X)
-if size != length:
-return
+    size = len(X)
+    if size != length:
+        return
 
-save_file = save_path.joinpath("size{}.svg".format(size))
-print("Searching for results at {}".format(save_file))
-if save_file.exists():
-return
-print("Training on {} tweets".format(size))
+    save_file = save_path.joinpath("size{}.svg".format(size))
+    print("Searching for results at {}".format(save_file))
+    if save_file.exists():
+        return
+    print("Training on {} tweets".format(size))
 
-algorithms = [XGBoost(), LogisticRegression(), RandomForest(),
-MultilayerPerceptron(), NaiveBayes(), StochasticGD()]
+    algorithms = [XGBoost(), LogisticRegression(), RandomForest(),
+                  MultilayerPerceptron(), NaiveBayes(), StochasticGD()]
 
-start = timer()
-args = [(algorithm, X, y) for algorithm in algorithms]
-with multiprocessing.Pool() as pool_inner:
-algorithms = pool_inner.starmap(evaluate, args)
-print("Total training time for size {}: {}s".format(size, timer() - start))
+    start = timer()
+    args = [(algorithm, X, y) for algorithm in algorithms]
+    with multiprocessing.Pool() as pool_inner:
+        algorithms = pool_inner.starmap(evaluate, args)
+    print("Total training time for size {}: {}s".format(size, timer() - start))
 
-algorithms.sort(key=lambda x: x.accuracy, reverse=True)
+    algorithms.sort(key=lambda x: x.accuracy, reverse=True)
 
-accuracies = [algorithm.accuracy for algorithm in algorithms]
-mean_acc = np.mean(accuracies)
-std_acc = np.std(accuracies)
+    accuracies = [algorithm.accuracy for algorithm in algorithms]
+    mean_acc = np.mean(accuracies)
+    std_acc = np.std(accuracies)
 
-precisions = [algorithm.precision for algorithm in algorithms]
-mean_pre = np.mean(precisions)
-std_pre = np.std(precisions)
+    precisions = [algorithm.precision for algorithm in algorithms]
+    mean_pre = np.mean(precisions)
+    std_pre = np.std(precisions)
 
-recalls = [algorithm.recall for algorithm in algorithms]
-mean_rec = np.mean(recalls)
-std_rec = np.std(recalls)
+    recalls = [algorithm.recall for algorithm in algorithms]
+    mean_rec = np.mean(recalls)
+    std_rec = np.std(recalls)
 
-times = [algorithm.time for algorithm in algorithms]
-mean_time = np.mean(times)
-std_time = np.std(times)
+    times = [algorithm.time for algorithm in algorithms]
+    mean_time = np.mean(times)
+    std_time = np.std(times)
 
-data = {
-"Name": [algorithm.name for algorithm in algorithms],
-"Accuracy": accuracies,
-"Accuracy (Mean)": mean_acc,
-"Accuracy (std)": std_acc,
-"Precision": precisions,
-"Precision (Mean)": mean_pre,
-"Precision (std)": std_pre,
-"Recall": recalls,
-"Recall (Mean)": mean_rec,
-"Recall (std)": std_rec,
-"Time (s)": times,
-"Time (s) (mean)": mean_time,
-"Time (s) (std)": std_time
-}
+    data = {
+        "Name": [algorithm.name for algorithm in algorithms],
+        "Accuracy": accuracies,
+        "Accuracy (Mean)": mean_acc,
+        "Accuracy (std)": std_acc,
+        "Precision": precisions,
+        "Precision (Mean)": mean_pre,
+        "Precision (std)": std_pre,
+        "Recall": recalls,
+        "Recall (Mean)": mean_rec,
+        "Recall (std)": std_rec,
+        "Time (s)": times,
+        "Time (s) (mean)": mean_time,
+        "Time (s) (std)": std_time
+    }
 
-save_dict(data, size, save_path)
+    save_dict(data, size, save_path)
 
-save_graph_individual(algorithms, size)
+    save_graph_individual(algorithms, size)
 
-return algorithms
+    return algorithms
 \end{lstlisting}
 
 As you can see, the data length is verified before proceeding with training.
 The algorithm wrapper classes are setup, before being fed into a tuple with the data, then processed asynchronously.
 The processing function in this case is \lstinline{evaluate()}, which calls the \lstinline{cross_validate()} function from Scikit-Learn, along with the parameters previously described.
 
-\begin{lstlisting}
+\begin{lstlisting}[caption={Function for getting scores for a single algorithm},captionpos=b]
 def evaluate(algorithm, X, y):
-scoring = ['accuracy', 'precision_weighted', 'recall_weighted']
-function = wrapper(
-cross_validate, algorithm.pipeline, X, y, cv=10, scoring=scoring)
-scores, time = run_algorithm(function)
-algorithm.accuracy, algorithm.precision, algorithm.recall = scores
-algorithm.time = time
-return algorithm
+    scoring = ['accuracy', 'precision_weighted', 'recall_weighted']
+    function = wrapper(
+        cross_validate, algorithm.pipeline, X, y, cv=10, scoring=scoring)
+    scores, time = run_algorithm(function)
+    algorithm.accuracy, algorithm.precision, algorithm.recall = scores
+    algorithm.time = time
+    return algorithm
 \end{lstlisting}
 
 The use of wrappers for both functions and classes is very useful for customisability and comprehension, and it leaves each function reasonably abstract from other functions, meaning it's both understandable, but easy for someone to build on the existing setup, and add different metrics, algorithms or use different evaluation functions.
 
 An example algorithm wrapper class may look like this:
 
-\begin{lstlisting}
-class LogisticRegression:
-def __init__(self):
-self.name = "Logistic Regression"
-self.pipeline = Pipeline(
-steps=[
-('tfidf', TfidfTransformer()),
-('log_reg', lp(
-multi_class='multinomial', solver='saga', max_iter=100))
-]
-)
-self.colour = 'g'
+\begin{lstlisting}[caption={Example classification algorithm wrapper class},captionpos=b]
+	class LogisticRegression:
+    def __init__(self):
+        self.name = "Logistic Regression"
+        self.pipeline = Pipeline(
+            steps=[
+                ('tfidf', TfidfTransformer()),
+                ('log_reg', lp(
+                    multi_class='multinomial', solver='saga', max_iter=100))
+            ]
+        )
+        self.colour = 'g'
 \end{lstlisting}
 
 All wrapper classes have a name, a Scikit-Learn compatible pipeline and a colour for use in graphs (for consistency reasons).
@@ -855,7 +850,7 @@ Logistic Regression was the most accurate algorithm by a fair margin, and was si
 \begin{table}[h!]
 	\begin{center}
 		\caption{By Precision}
-		\label{tab:table1}
+		\label{tab:table2}
 		\begin{tabular}{l|l|l|l|l}
 			\textbf{Name}               & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{Time (s)} \\
 			\hline
@@ -876,7 +871,7 @@ Multilayer Perceptron was the most precise, but only by 0.001 more than Logistic
 \begin{table}[h!]
 	\begin{center}
 		\caption{By Time}
-		\label{tab:table1}
+		\label{tab:table3}
 		\begin{tabular}{l|l|l|l|l}
 			\textbf{Name}               & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{Time (s)} \\
 			\hline
@@ -974,7 +969,9 @@ It's clear that the biggest outlier by any measure is Random Forest due to its c
 
 \section{Conclusion}
 
-If I had more time, I would have tweaked all algorithms, using all available parameters and exhausting all possible combinations of parameters, to provide the highest accuracy.
+If I had more time, I would have tweaked all algorithms, using all available parameters and exhausting all possible combinations of parameters, to provide the highest accuracy for each.
+I think I got reasonably good scores for all algorithms, and I'm pretty happy with the structure and functionality of my code, in particular the pre-processing and setup for training, as well as the data handling parts.
+I would have also liked to have compared more algorithms, and find a clear pattern between which parameters increase precision or accuracy regardless of the algorithm, as well as improving my classifier to be able to find the sentiment of more complex sentences.
 
 \section{Bibliography}
 

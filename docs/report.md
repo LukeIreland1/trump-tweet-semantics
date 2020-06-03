@@ -15,6 +15,8 @@ WC: 4500 ~(PDF output into MS Word - 100)
   - [4.1 Dataset](#41-dataset)
   - [4.2 Labelling](#42-labelling)
 - [5. How I compared each Sentiment Classification algorithm to one another](#5-how-i-compared-each-sentiment-classification-algorithm-to-one-another)
+  - [5.1 Overview](#51-overview)
+  - [5.2 My Code](#52-my-code)
 - [6. Evaluation](#6-evaluation)
   - [Results](#results)
     - [Aggregated Statistics](#aggregated-statistics)
@@ -97,69 +99,70 @@ Naive Bayes classifiers are simple probabilistic classifers which apply Bayes' t
 
 ```python
 sentiments = {
-  word:{
-  "neg":0,
-  "neut":0,
-  "pos":0
-  } for word in getwords() # Dictionary tracking sentiment history of words, where getwords() gets all words in given document
+    word:{
+    "neg":0,
+    "neut":0,
+    "pos":0
+    } for word in getwords() # Dictionary tracking sentiment history of words, where getwords() gets all words in given document
 }
+
 for tweet in tweets:
-  sentiment = getlabel(tweet) # where getlabel() is a function that gets the sentiment of the labelled tweet.
-  for word in tweet:
-    if sentiment == -1:
-      sentiments[word]["neg"]+=1
-    elif sentiment == 0:
-      sentiments[word]["neut"]+=1
-    elif sentiment == 1:
-      sentiments[word]["pos"]+=1
-return max(sentiments)
+    sentiment = getlabel(tweet) # where getlabel() is a function that gets the sentiment of the labelled tweet.
+    for word in tweet:
+        if sentiment == -1:
+           sentiments[word]["neg"]+=1
+        elif sentiment == 0:
+           sentiments[word]["neut"]+=1
+        elif sentiment == 1:
+           sentiments[word]["pos"]+=1
+    return max(sentiments)
 ```
 
 Random Forest classifiers operate by constructing multiple decision trees at training time, and use the mode of each individual tree's classification of the input vector (in this case - array of sentiments) to decide upon a class. A decision tree is a tree that consists of parent nodes that contain decisions or clauses, and leaf nodes with a classification[^12].
 
 ```python
 for tweet in tweets:
-  tree = DTree(tweet)
-  sentiment = tree.mode()
-  print(tweet, sentiment)
+    tree = DTree(tweet)
+    sentiment = tree.mode()
+    print(tweet, sentiment)
 
 class DTree:
-  def __init__(self, text):
-    self.children = []
-    self.scores = []
-    self.sentiment = None
-    self.text = text
-    calculate()
+    def __init__(self, text):
+        self.children = []
+        self.scores = []
+        self.sentiment = None
+        self.text = text
+        calculate()
 
-  def calculate(self, weight=1):
-    length = len(text.split())
-    if length == 1:
-      self.sentiment = get_sentiment(text) * weight # Sentiwordnet
-      self.scores = [self.sentiment]
-    else:
-      for word in text:
-        self.children.append(DTree(word))
-      for child in self.children:
-        self.scores += child.scores
+    def calculate(self, weight=1):
+        length = len(text.split())
+        if length == 1:
+            self.sentiment = get_sentiment(text) * weight # Sentiwordnet
+            self.scores = [self.sentiment]
+        else:
+            for word in text:
+                self.children.append(DTree(word))
+            for child in self.children:
+                self.scores += child.scores
 
-  def mode(self):
-    neutrals = 0
-    negatives = 0
-    positives = 0
-    for child in self.children:
-      if child.sentiment = -1:
-        negatives += 1
-      elif child.sentiment = 0:
-        neutrals += 1
-      else:
-        positives += 1
-    return max(neutrals, negatives, positives)
+    def mode(self):
+        neutrals = 0
+        negatives = 0
+        positives = 0
+        for child in self.children:
+            if child.sentiment = -1:
+                negatives += 1
+            elif child.sentiment = 0:
+                neutrals += 1
+            else:
+                positives += 1
+        return max(neutrals, negatives, positives)
 
-  def adjust(self, loss):
-    new_children = []
-    for child in self.children:
-      new_children.append(child.calculate(weight=loss))
-    self.children = new_children
+    def adjust(self, loss):
+        new_children = []
+        for child in self.children:
+            new_children.append(child.calculate(weight=loss))
+        self.children = new_children
 ```
 
 XGBoost classifier is a gradient boosting algorithm that uses proportional shrinking of leaf nodes, smart tree penalization and differentiation to improve it's understanding of each of the classes used in training. It uses a variety of parameters requiring optimisation to improve accuracy. Gradient boosting algorithms produce prediction models in the form of an ensemble weak prediction model, typically decision trees (similar to random forest). The models are then built in stages, and generalised by allowing optimisation of an arbitrary differentiable loss function, often softmax for multiclass classifiers[^13].
@@ -167,106 +170,106 @@ XGBoost classifier is a gradient boosting algorithm that uses proportional shrin
 ```python
 
 def softmax(tree):
-  scores = []
-  for child in tree.children:
-    scores += child.scores
-  return (e^scores)/sum(scores)
+    scores = []
+    for child in tree.children:
+        scores += child.scores
+    return (e^scores)/sum(scores)
 
 for tweet in tweets:
   ...
-  loss = softmax(tree)
-  while loss > desired:
-    tree.adjust(loss)
     loss = softmax(tree)
+    while loss > desired:
+        tree.adjust(loss)
+        loss = softmax(tree)
 ```
 
 A Multilayer Perceptron is a type of feedforward artificial neural network, consisting of an input layer, a hidden layer and an output layer. Each non-input node is a neuron that uses a nonlinear activation function (to calculate the neuron's output from the input nodes), and uses a supervised learning technique called backpropagation (hence feedforward), similar to the least mean squares algorithm, for training. Backpropagation computes the gradient of the loss function with respect to the weights of the network for a single input–output(tweet-sentiment) example. Learning is performed by changing the connection weights between the layers, based on the amount of error between the class prediction and actual class, calculated through backpropagation[^14].
 
 ```python
 class MLP:
-  def __init__(self, text):
-    self.input = [InputNode(word) for word in text]
-    self.hidden = [HiddenNode(self.input) for node in self.input]
-    self.output = OutputNode(self.hidden)
-    for node in self.hidden
-      node.parent = self.output
-    for epochs in range(10):
-      for node in self.hidden:
-        node.calculate()
-    print(self.output.prediction)
+    def __init__(self, text):
+        self.input = [InputNode(word) for word in text]
+        self.hidden = [HiddenNode(self.input) for node in self.input]
+        self.output = OutputNode(self.hidden)
+        for node in self.hidden
+            node.parent = self.output
+        for epochs in range(10):
+            for node in self.hidden:
+                node.calculate()
+        print(self.output.prediction)
 
 class Node:
-  def __init__(self):
-    pass
+    def __init__(self):
+        pass
 
 class InputNode(Node):
-  def __init__(self, text):
-    self.text = text
+    def __init__(self, text):
+        self.text = text
 
 class HiddenNode(Node):
-  def __init__(self, children, weight=1):
-    self.scores = None
-    self.weight = weight
-    self.children = children
+    def __init__(self, children, weight=1):
+        self.scores = None
+        self.weight = weight
+        self.children = children
 
-  def calculate(self)
-    scores = []
-    for child in self.children:
-      text = child.text
-      scores.append(get_sentiment(text) * self.weight)
-    self.loss = loss_func(scores) # where loss_func is any given loss func, such as least mean squares.
-    self.scores = scores
-    self.parent.result()
+    def calculate(self)
+        scores = []
+        for child in self.children:
+            text = child.text
+            scores.append(get_sentiment(text) * self.weight)
+        self.loss = loss_func(scores) # where loss_func is any given loss func, such as least mean squares.
+        self.scores = scores
+        self.parent.result()
 
 class OutputNode(Node):
-  def __init__(self, children):
-    self.prediction = None
-    self.children = children
-    self.weights = [1 for child in self.children]
+    def __init__(self, children):
+        self.prediction = None
+        self.children = children
+        self.weights = [1 for child in self.children]
 
   def result(self):
     scores = []
     for i in range(len(self.children)):
-      scores.append(self.children[i].score * self.weights[i])
+        scores.append(self.children[i].score * self.weights[i])
     self.prediction = mean(scores)
     self.weights = [loss_func_deriv(score) for score in scores] # Where loss_func_deriv is the inverse of loss_func.
 ```
 
 Logistic Regression is a classifier model that uses a logistic function to model a dependent variable. It measures the relationship between the categorical dependent variable and one or more independent variables by estimating probabilities using a logistic function, which is the cumulative distribution function of logistic regression.
 
-I will specifically be using multinomial logistic regression, as I have 3 classes. The score vector for a given document (tweet) is in the format: scores(X,k) = β<sub>k</sub>*X, where X is a vector of the words that make up the tweet, and β is a vector of weights corresponding to outcome (sentiment) k. This score vector is then used by the softmax function to calculate a probability of the tweet belonging to that sentiment[^15].
+I will specifically be using multinomial logistic regression, as I have 3 classes. The score vector for a given document (tweet) is in the format: scores(X,k) = β<sub>k</sub>\*X, where X is a vector of the words that make up the tweet, and β is a vector of weights corresponding to outcome (sentiment) k. This score vector is then used by the softmax function to calculate a probability of the tweet belonging to that sentiment[^15].
 
 Softmax is simply: e^<sup>scores</sup>/sum(scores), where scores is a vector, where each element corresponds to a word and sentiment prediction.
 
 ```python
 def get_scores(words, weights):
-  neg_weight = weights[0]
-  neut_weight = weights[1]
-  pos_weight = weights[2]
+    neg_weight = weights[0]
+    neut_weight = weights[1]
+    pos_weight = weights[2]
 
-  neg_scores = [get_neg_score(word) for word in words]
-  neut_scores = [get_neut_score(word) for word in words]
-  pos_scores = [get_pos_score(word) for word in words]
+    neg_scores = [get_neg_score(word) for word in words]
+    neut_scores = [get_neut_score(word) for word in words]
+    pos_scores = [get_pos_score(word) for word in words]
 
-  neg_scores = [score * neg_weight for score in neg_words]
-  neut_scores = [score * neut_weight for score in neut_words]
-  pos_scores = [score * pos_weight for score in pos_words]
+    neg_scores = [score * neg_weight for score in neg_words]
+    neut_scores = [score * neut_weight for score in neut_words]
+    pos_scores = [score * pos_weight for score in pos_words]
 
-  return [neg_scores, neut_scores, pos_scores]
+    return [neg_scores, neut_scores, pos_scores]
 
 def softmax(scores):
-  return math.E**scores/sum(scores)
+    return math.E**scores/sum(scores)
 
 weights = [1, 1, 1]
 
 for tweet in tweets:
-  probabilities = [softmax(score) for score in get_scores(tweet.split(), weights)]
-  prediction = probabilities.index(max(probabilities))
-  weights[prediction] *= 1.1
-  for i in range(len(weights)):
-    if i != prediction:
-      weights[i] *= 0.9
-  return prediction - 1
+    probabilities = [softmax(score) for score in get_scores(tweet.split(), weights)]
+    prediction = probabilities.index(max(probabilities))
+    weights[prediction] *= 1.1
+    for i in range(len(weights)):
+        if i != prediction:
+        weights[i] *= 0.9
+    return prediction - 1
 ```
 
 Stochastic Gradient Descent is an iterative method for optimizing an objective function with suitable smoothness properties.
@@ -280,7 +283,7 @@ where the parameter w (sentiment polarity) is to be estimated. Each summand func
 2. Repeat until an appropriate minimum is obtained:
    1. Randomly shuffle examples in the training set
    2. For i in range(n):
-      1. w = w - r*loss(w)
+      1. w = w - r\*loss(w)
 
 Due to their simple effectiveness, I predict Naive Bayes, Random Forest, and Logistic Regression will perform the best to begin with, certainly in terms of speed, but with tweaking, Multilayer Perceptron and XGB should provide comparable or better accuracy.
 
@@ -294,7 +297,13 @@ For tweet generation, I used [Markovify](https://github.com/jsvine/markovify)[^1
 
 # 3. Development Methodology
 
-Due to developing alone, and most of the work I did being completed quite quickly, I decided to go for an Agile approach, with sprints lasting a month. I would make clear targets at the beginning of the sprint and make sure they're done by the end of the sprint. This was pretty successful and I feel like I got a lot done by making feasible targets and commiting to making them.
+I decided on an Agile approach, as requirements weren't well known at the start, with sprints lasting a week, as I had weekly meetings where I would discuss my progress with the client (project supervisor). I would make clear targets at the beginning of the sprint and make sure they're done by the end of the sprint. This was mostly successful and I feel like I got a lot done by creating small tasks into tickets on JIRA after discussing them with the client, then commit to completing the most important tickets first. My biggest strength was coding (implementing logic) and refactoring (making code easier to understand). My biggest weakness was writing the report, as I found it hard to think about what is relevant or interesting within each chapter. I imagine this is probably a result of the Agile approach, as I had to create more work for myself in order to write more.
+
+I followed the MoSCoW method of Must Have, Should Have, Could Have and Won't Have, with Must Have tickets or epics being the most time critical, and Won't Have being the least time critical. Epics were creating to link tickets together, so that I could complete related same-priority tickets at the same time, to increase logical cohesion in any work I completed.
+
+Here is a cumulative flow diagram, demonstrating my ticket completion and creation rates:
+![Figure 2](images/cum_flow_diagram.png "Figure 2")
+_Figure 2_ - Cumulative Flow Diagram
 
 # 4. Data Pre-processing
 
@@ -306,13 +315,13 @@ I used NLTK to look at the most common words and phrases of different lengths, t
 
 Here is a word cloud I created using my custom `TweetCloud` class that uses Python library wordcloud, but adds important features for NLP abstraction, **without** tweet cleaning.
 
-![Figure 2](images/wordcloud4.png "Figure 2")
-_Figure 2_ - WordCloud of phrases of length 4.
+![Figure 3](images/wordcloud4.png "Figure 3")
+_Figure 3_ - WordCloud of phrases of length 4 (uncleaned).
 
 Here is one produced after tweet cleaning:
 
-![Figure 3](images/cleancloud.svg "Figure 3")
-_Figure 3_ - WordCloud of phrases of length 4.
+![Figure 4](images/cleancloud.svg "Figure 4")
+_Figure 4_ - WordCloud of phrases of length 4 (cleaned).
 
 I created my own class using Markovify[^20], that would force the library's generator to generate tweets (280 characters max) in Trump-like prose containing a given input word.
 
@@ -357,9 +366,7 @@ I decided to standardise my scores using the z-score method of `new score = (raw
 
 # 5. How I compared each Sentiment Classification algorithm to one another
 
-TODO:
-
-1. Show some of my code.
+## 5.1 Overview
 
 I originally intended to implement the algorithms themselves, but came across Scikit-Learn's pipelines, which gave very easily reproducible and fair ways of running classification algorithms, which was immensely useful to me trying to compare these algorithms. I could have used these pipelines with my own implementations, but that would then require the further diversion of learning how to make it compatible, plus their implementations will have been well tested and scrutinised. I instead opted to go along with their implementation which slot into their pipelines very nicely. Pipelines contain function calls as steps, which are used on the input data, through the pipeline training function provided by Scikit-Learn: `cross_val_score`.
 
@@ -384,6 +391,295 @@ The training time per "step" (a given data length) was improved, but it wasn't b
 The data lengths used were 1/8, 1/4, 3/8, 1/2, 5/8, 3/4, 7/8, 1/1 of the total 46208 tweets.
 
 These dictionaries were passed to an export function that saved the results to a text file, and created a combined graph. I also created an import function if I wished to alter the graph, without running the ~3 hour long program again.
+
+## 5.2 My Code
+
+The general structure of my program is modular, with training, pre-processing and pre-labelling all split up into seperate python files within the same module.
+
+Pre-labelling is handled by `utils/lukifier.py` which mainly revolves around the function `swn_polarity`. `swn_polarity` uses WordNet tags to get the right synset from sentiwordnet and extract the corresponding sentiment score. I added a very small example of negation, but this is a naive classifier, and can't handle overly complex English sentences, which is fine, due to general prose used for tweets, and Donald Trump's in particular.
+
+```python
+def swn_polarity(self):
+    """
+    Return a sentiment polarity: -1 = negative, 0 = neutral, 1 = positive
+    """
+
+    sentiment = 0.0
+    tokens_count = 0
+
+    raw_sentences = sent_tokenize(self.text)
+    for raw_sentence in raw_sentences:
+        tagged_sentence = pos_tag(word_tokenize(raw_sentence))
+
+        negated = False
+        for word, tag in tagged_sentence:
+            self.tag = tag
+
+            if word.endswith("n't") or word == "not":
+                negated = True
+
+            if len(word) <= 2:
+                continue
+
+            wn_tag = self.penn_to_wn()
+
+            if wn_tag:
+                lemma = lemmatizer.lemmatize(word, pos=wn_tag)
+            else:
+                continue
+
+            if not lemma:
+                continue
+
+            synsets = wn.synsets(word, pos=wn_tag)
+            if not synsets:
+                synsets = wn.synsets(word)
+                if not synsets:
+                    continue
+
+            # Take the first sense, the most common
+            synset = synsets[0]
+            swn_synset = swn.senti_synset(synset.name())
+
+            pos_score = swn_synset.pos_score()
+            neg_score = swn_synset.neg_score()
+
+            if negated:
+                pos_score = pos_score*-1
+                neg_score = neg_score*-1
+
+            if neg_score == pos_score:
+                pos_score = 0
+
+            diff = pos_score - neg_score
+            self.words.append((word, diff))
+
+            sentiment += diff
+            tokens_count += 1
+
+    # judgment call ? Default to positive or negative
+    if not tokens_count:
+        return 0
+
+    self.score = sentiment
+
+    # positive sentiment
+    if sentiment >= 0.125:
+        return 1
+
+    # negative sentiment
+    elif sentiment <= -0.125:
+        return -1
+
+    # neutral sentiment
+    return 0
+```
+
+As you can see, the function takes any block of text and finds the sentiment score for each word within that text, using lemmas, negations and tags to correctly and fairly identify usages of words. Invalid input will simply return a neutral score of 0.
+
+Pre-processing is handled by `utils/tweet_getter.py` which reads the `resources/tweets.json` file as a dictionary, cleans them as previously described, then uses `utils/lukifier.py` to get a label. It can return uncleaned tweets, cleaned tweets, and cleaned labelled tweets; both standardised and non-standardised. The classifiers to be compared are obviously interested in the latter.
+
+```python
+    def get_clean_tweets_with_scores(self):
+        if not self.tweets_with_scores:
+            print("Getting scores")
+            if not self.cleaned_tweets:
+                self.cleaned_tweets = self.get_clean_tweets()
+            data = {
+                'tweet': [],
+                'score': [],
+                'polarity': []
+            }
+            for tweet in self.cleaned_tweets:
+                classifier = Lukifier(tweet)
+                data['tweet'].append(tweet)
+                data['score'].append(classifier.score)
+                data['polarity'].append(classifier.polarity)
+            self.tweets_with_scores = pd.DataFrame(data)
+        print("Got {} scores".format(len(self.cleaned_tweets)))
+        return self.tweets_with_scores
+
+    def standardise(self, x, std, mean):
+        return (x-mean)/std
+
+    def classify(self, sentiment):
+        if sentiment >= 0.125:
+            return 1
+
+        elif sentiment <= -0.125:
+            return -1
+
+        return 0
+
+    def get_standardised_tweets(self):
+        if not self.tweets_with_scores:
+            self.get_clean_tweets_with_scores()
+        std = self.tweets_with_scores.score.std()
+        mean = self.tweets_with_scores.score.mean()
+        self.tweets_with_scores.score = [self.standardise(
+            x, std, mean) for x in self.tweets_with_scores.score]
+        self.tweets_with_scores.polarity = [
+            self.classify(x) for x in self.tweets_with_scores.score]
+        return self.tweets_with_scores
+```
+
+As you can see, the `standardise()` function is called on all labelled tweets, to adjust their corresponding sentiment score using the z-score method. The tweets are then re-classified based on their new standardised score.
+
+The data returned from `utils/tweet_getter.py` is used in the main file `main_async.py`. The main function gives you an initial option to restart training, or continue from where the program last terminated. The program then gets the labelled tweets and calls `progressive_train` using the tweets and corresponding sentiments.
+
+```python
+def progressive_train(X, y, save_path):
+    results = []
+
+    orig_size = len(X)
+    sizes = [i*0.125 for i in range(1, 9)]
+    lengths = [int(size*orig_size) for size in sizes]
+
+    print("Training on tweets of sizes: {}".format(lengths))
+    print("Original size is: {}".format(orig_size))
+
+    for length in lengths:
+        X_train, y_train = get_slice(X, y, length)
+        print(length, len(X), len(X_train), len(y_train))
+        if length in lengths:
+            algorithms = train(X_train, y_train, save_path, length)
+            if algorithms:
+                if not results:
+                    results = algorithms
+                    for result in results:
+                        result.time = [result.time]
+                        result.accuracy = [result.accuracy]
+                        result.precision = [result.precision]
+                        result.recall = [result.recall]
+                else:
+                    for i in range(len(results)):
+                        results[i].time.append(algorithms[i].time)
+                        results[i].accuracy.append(algorithms[i].accuracy)
+                        results[i].precision.append(algorithms[i].precision)
+                        results[i].recall.append(algorithms[i].recall)
+
+        time_string = time.strftime("%H:%M:%S", time.localtime())
+        print("Training for size {} finished at {}".format(length, time_string))
+
+    plt.autoscale(True)
+    for algorithm in algorithms:
+        print(algorithm)
+        plt.plot(algorithm.accuracy, algorithm.time, "{}o".format(
+            algorithm.colour), label="{} (Accuracy)".format(algorithm.name))
+        plt.plot(algorithm.precision, algorithm.time, "{}v".format(
+            algorithm.colour), label="{} (Precision)".format(algorithm.name))
+        plt.plot(algorithm.recall, algorithm.time, "{}s".format(
+            algorithm.colour), label="{} (Recall)".format(algorithm.name))
+
+    plt.xlabel("Score")
+    plt.ylabel("Time (s)")
+    lg = plt.legend(bbox_to_anchor=(1.05, 1.0), loc='upper left')
+    save_file = Path("graphs/combined.svg")
+    plt.savefig(str(save_file),
+                dpi=300,
+                format='svg',
+                bbox_extra_artists=(lg,),
+                bbox_inches='tight')
+```
+
+`progressive_train()` is an optional setup function allowing a user to use the main `train()` function on varying sizes of tweets. `progressive_train()` finishes by plotting an aggregated graph.
+
+`train()` is given any length of data, then calls all 6 algorithm implementations using the data, gathering the accuracy, precision, recall and time scores for each. The mean and standard deviation for each of these scores is also calculated, then all data produced is saved to a file using `save_dict()` and a template `TEMPLATE`. A graph for an invididual run of `train()` is also produced using `save_graph_individual()`.
+
+```python
+def train(X, y, save_path, length):
+    size = len(X)
+    if size != length:
+        return
+
+    save_file = save_path.joinpath("size{}.svg".format(size))
+    print("Searching for results at {}".format(save_file))
+    if save_file.exists():
+        return
+    print("Training on {} tweets".format(size))
+
+    algorithms = [XGBoost(), LogisticRegression(), RandomForest(),
+                  MultilayerPerceptron(), NaiveBayes(), StochasticGD()]
+
+    start = timer()
+    args = [(algorithm, X, y) for algorithm in algorithms]
+    with multiprocessing.Pool() as pool_inner:
+        algorithms = pool_inner.starmap(evaluate, args)
+    print("Total training time for size {}: {}s".format(size, timer() - start))
+
+    algorithms.sort(key=lambda x: x.accuracy, reverse=True)
+
+    accuracies = [algorithm.accuracy for algorithm in algorithms]
+    mean_acc = np.mean(accuracies)
+    std_acc = np.std(accuracies)
+
+    precisions = [algorithm.precision for algorithm in algorithms]
+    mean_pre = np.mean(precisions)
+    std_pre = np.std(precisions)
+
+    recalls = [algorithm.recall for algorithm in algorithms]
+    mean_rec = np.mean(recalls)
+    std_rec = np.std(recalls)
+
+    times = [algorithm.time for algorithm in algorithms]
+    mean_time = np.mean(times)
+    std_time = np.std(times)
+
+    data = {
+        "Name": [algorithm.name for algorithm in algorithms],
+        "Accuracy": accuracies,
+        "Accuracy (Mean)": mean_acc,
+        "Accuracy (std)": std_acc,
+        "Precision": precisions,
+        "Precision (Mean)": mean_pre,
+        "Precision (std)": std_pre,
+        "Recall": recalls,
+        "Recall (Mean)": mean_rec,
+        "Recall (std)": std_rec,
+        "Time (s)": times,
+        "Time (s) (mean)": mean_time,
+        "Time (s) (std)": std_time
+    }
+
+    save_dict(data, size, save_path)
+
+    save_graph_individual(algorithms, size)
+
+    return algorithms
+```
+
+As you can see, the data length is verified before proceeding with training. The algorithm wrapper classes are setup, before being fed into a tuple with the data, then processed asynchronously. The processing function in this case is `evaluate()`, which calls the `cross_validate()` function from Scikit-Learn, along with the parameters previously described.
+
+```python
+def evaluate(algorithm, X, y):
+    scoring = ['accuracy', 'precision_weighted', 'recall_weighted']
+    function = wrapper(
+        cross_validate, algorithm.pipeline, X, y, cv=10, scoring=scoring)
+    scores, time = run_algorithm(function)
+    algorithm.accuracy, algorithm.precision, algorithm.recall = scores
+    algorithm.time = time
+    return algorithm
+```
+
+The use of wrappers for both functions and classes is very useful for customisability and comprehension, and it leaves each function reasonably abstract from other functions, meaning it's both understandable, but easy for someone to build on the existing setup, and add different metrics, algorithms or use different evaluation functions.
+
+An example algorithm wrapper class may look like this:
+
+```python
+class LogisticRegression:
+    def __init__(self):
+        self.name = "Logistic Regression"
+        self.pipeline = Pipeline(
+            steps=[
+                ('tfidf', TfidfTransformer()),
+                ('log_reg', lp(
+                    multi_class='multinomial', solver='saga', max_iter=100))
+            ]
+        )
+        self.colour = 'g'
+```
+
+All wrapper classes have a name, a Scikit-Learn compatible pipeline and a colour for use in graphs (for consistency reasons). All wrapper classes have a TfIdf transformer applied before the algorithm is called, to boost scores.
 
 # 6. Evaluation
 
@@ -505,7 +801,7 @@ _46208 Tweets_
 ![Combined Results](images/combined.svg "Combined Results")
 _Combined Results_
 
-Overall, the relative positions of each algorithm with respect to each other stayed about the same, but there is some definite movement for some algorithms, meaning some algorithms perform better in comparison for smaller or larger datasets.
+Overall, the relative positions of each algorithm with respect to each other stayed about the same, but there is some definite movement for some algorithms, meaning some algorithms perform better in comparison for smaller or larger datasets. It's clear that the biggest outlier by any measure is Random Forest due to its considerable time difference compared to other algorithms.
 
 # 7. Conclusion
 
